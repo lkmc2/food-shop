@@ -49,6 +49,12 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- spring boot 热部署 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+        </dependency>
+
         <!-- spring boot test 依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
