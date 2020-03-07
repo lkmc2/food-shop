@@ -12,7 +12,16 @@
 
     <!-- 子模块列表 -->
     <modules>
+        <!-- 公共模块 -->
         <module>food-shop-common</module>
+        <!-- 实体类模块 -->
+        <module>food-shop-pojo</module>
+        <!-- 数据库查询模块 -->
+        <module>food-shop-dao</module>
+        <!-- 服务模块 -->
+        <module>food-shop-service</module>
+        <!-- api 接口模块 -->
+        <module>food-shop-api</module>
     </modules>
 
 </project>
