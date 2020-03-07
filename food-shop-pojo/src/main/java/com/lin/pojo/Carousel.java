@@ -4,6 +4,11 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import java.util.Date;
 
+/**
+ * 轮播图实体类
+ * @author lkmc2
+ * @date 2020/3/7 20:57
+ */
 public class Carousel {
     /**
      * 主键id

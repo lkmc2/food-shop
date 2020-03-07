@@ -5,6 +5,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
 
+/**
+ * 商品参数实体类
+ * @author lkmc2
+ * @date 2020/3/7 20:57
+ */
 @Table(name = "items_param")
 public class ItemsParam {
     /**

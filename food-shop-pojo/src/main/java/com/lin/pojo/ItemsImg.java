@@ -5,6 +5,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
 
+/**
+ * 商品图片实体类
+ * @author lkmc2
+ * @date 2020/3/7 20:57
+ */
 @Table(name = "items_img")
 public class ItemsImg {
     /**

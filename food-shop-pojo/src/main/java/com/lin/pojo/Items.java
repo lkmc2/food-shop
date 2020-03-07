@@ -4,6 +4,11 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import java.util.Date;
 
+/**
+ * 商品表实体类
+ * @author lkmc2
+ * @date 2020/3/7 20:57
+ */
 public class Items {
     /**
      * 商品主键id

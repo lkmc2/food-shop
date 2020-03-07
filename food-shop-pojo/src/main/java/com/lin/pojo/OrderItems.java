@@ -4,6 +4,11 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * 订单商品关联表实体类
+ * @author lkmc2
+ * @date 2020/3/7 20:57
+ */
 @Table(name = "order_items")
 public class OrderItems {
     /**

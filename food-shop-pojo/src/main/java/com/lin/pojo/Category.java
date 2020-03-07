@@ -3,6 +3,11 @@ package com.lin.pojo;
 import javax.persistence.Column;
 import javax.persistence.Id;
 
+/**
+ * 商品分类实体类
+ * @author lkmc2
+ * @date 2020/3/7 20:57
+ */
 public class Category {
     @Id
     private String id;
