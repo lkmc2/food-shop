@@ -39,3 +39,13 @@ spring:
 mybatis:
   type-aliases-package: com.lin.pojo         # 所有实体类所有包逻辑
   mapper-locations: classpath:mapper/*.xml   # mapper xml 所在位置
+
+############################################################
+#
+# mybatis 通用 mapper 配置
+#
+############################################################
+mapper:
+  mappers: com.lin.my.mapper.MyMapper # 通用 Mapper 的基础类所在位置
+  not-empty: false # 在进行数据库操作的时候，判断表达式 username != null 时，是否追加 username != '' 的判断
+  identity: MYSQL
