@@ -134,4 +134,15 @@ public class PassportController {
         user.setBirthday(null);
     }
 
+    @ApiOperation(value = "用户退出登陆", notes = "用户退出登陆")
+    @PostMapping("/logout")
+    public JsonResult logout(@RequestParam String userId,
+                             HttpServletRequest request,
+                             HttpServletResponse response){
+        // 清除用户相关的 cookie 信息
+        CookieUtils.deleteCookie(request, response, "user");
+
+        return JsonResult.ok();
+    }
+
 }
