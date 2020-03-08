@@ -1,5 +1,9 @@
 package com.lin.pojo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -10,198 +14,42 @@ import java.util.Date;
  * @author lkmc2
  * @date 2020/3/7 20:57
  */
+@ApiModel("订单状态表实体类")
+@Data
 @Table(name = "order_status")
 public class OrderStatus {
-    /**
-     * 订单id 对应订单表的主键id
-     */
+
     @Id
     @Column(name = "order_id")
+    @ApiModelProperty(value = "订单id 对应订单表的主键id")
     private String orderId;
 
-    /**
-     * 订单状态
-     */
     @Column(name = "order_status")
+    @ApiModelProperty(value = "订单状态")
     private Integer orderStatus;
 
-    /**
-     * 订单创建时间 对应[10：待付款]状态
-     */
     @Column(name = "create_time")
+    @ApiModelProperty(value = "订单创建时间 对应[10：待付款]状态")
     private Date createTime;
 
-    /**
-     * 支付成功时间 对应[20：已付款，待发货]状态
-     */
     @Column(name = "pay_time")
+    @ApiModelProperty(value = "支付成功时间 对应[20：已付款，待发货]状态")
     private Date payTime;
 
-    /**
-     * 发货时间 对应[30：已发货，待收货]状态
-     */
     @Column(name = "deliver_time")
+    @ApiModelProperty(value = "发货时间 对应[30：已发货，待收货]状态")
     private Date deliverTime;
 
-    /**
-     * 交易成功时间 对应[40：交易成功]状态
-     */
     @Column(name = "success_time")
+    @ApiModelProperty(value = "交易成功时间 对应[40：交易成功]状态")
     private Date successTime;
 
-    /**
-     * 交易关闭时间 对应[50：交易关闭]状态
-     */
     @Column(name = "close_time")
+    @ApiModelProperty(value = "交易关闭时间 对应[50：交易关闭]状态")
     private Date closeTime;
 
-    /**
-     * 留言时间 用户在交易成功后的留言时间
-     */
     @Column(name = "comment_time")
+    @ApiModelProperty(value = "留言时间 用户在交易成功后的留言时间")
     private String commentTime;
 
-    /**
-     * 获取订单id 对应订单表的主键id
-     *
-     * @return order_id - 订单id 对应订单表的主键id
-     */
-    public String getOrderId() {
-        return orderId;
-    }
-
-    /**
-     * 设置订单id 对应订单表的主键id
-     *
-     * @param orderId 订单id 对应订单表的主键id
-     */
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
-    }
-
-    /**
-     * 获取订单状态
-     *
-     * @return order_status - 订单状态
-     */
-    public Integer getOrderStatus() {
-        return orderStatus;
-    }
-
-    /**
-     * 设置订单状态
-     *
-     * @param orderStatus 订单状态
-     */
-    public void setOrderStatus(Integer orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
-    /**
-     * 获取订单创建时间 对应[10：待付款]状态
-     *
-     * @return create_time - 订单创建时间 对应[10：待付款]状态
-     */
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    /**
-     * 设置订单创建时间 对应[10：待付款]状态
-     *
-     * @param createTime 订单创建时间 对应[10：待付款]状态
-     */
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    /**
-     * 获取支付成功时间 对应[20：已付款，待发货]状态
-     *
-     * @return pay_time - 支付成功时间 对应[20：已付款，待发货]状态
-     */
-    public Date getPayTime() {
-        return payTime;
-    }
-
-    /**
-     * 设置支付成功时间 对应[20：已付款，待发货]状态
-     *
-     * @param payTime 支付成功时间 对应[20：已付款，待发货]状态
-     */
-    public void setPayTime(Date payTime) {
-        this.payTime = payTime;
-    }
-
-    /**
-     * 获取发货时间 对应[30：已发货，待收货]状态
-     *
-     * @return deliver_time - 发货时间 对应[30：已发货，待收货]状态
-     */
-    public Date getDeliverTime() {
-        return deliverTime;
-    }
-
-    /**
-     * 设置发货时间 对应[30：已发货，待收货]状态
-     *
-     * @param deliverTime 发货时间 对应[30：已发货，待收货]状态
-     */
-    public void setDeliverTime(Date deliverTime) {
-        this.deliverTime = deliverTime;
-    }
-
-    /**
-     * 获取交易成功时间 对应[40：交易成功]状态
-     *
-     * @return success_time - 交易成功时间 对应[40：交易成功]状态
-     */
-    public Date getSuccessTime() {
-        return successTime;
-    }
-
-    /**
-     * 设置交易成功时间 对应[40：交易成功]状态
-     *
-     * @param successTime 交易成功时间 对应[40：交易成功]状态
-     */
-    public void setSuccessTime(Date successTime) {
-        this.successTime = successTime;
-    }
-
-    /**
-     * 获取交易关闭时间 对应[50：交易关闭]状态
-     *
-     * @return close_time - 交易关闭时间 对应[50：交易关闭]状态
-     */
-    public Date getCloseTime() {
-        return closeTime;
-    }
-
-    /**
-     * 设置交易关闭时间 对应[50：交易关闭]状态
-     *
-     * @param closeTime 交易关闭时间 对应[50：交易关闭]状态
-     */
-    public void setCloseTime(Date closeTime) {
-        this.closeTime = closeTime;
-    }
-
-    /**
-     * 获取留言时间 用户在交易成功后的留言时间
-     *
-     * @return comment_time - 留言时间 用户在交易成功后的留言时间
-     */
-    public String getCommentTime() {
-        return commentTime;
-    }
-
-    /**
-     * 设置留言时间 用户在交易成功后的留言时间
-     *
-     * @param commentTime 留言时间 用户在交易成功后的留言时间
-     */
-    public void setCommentTime(String commentTime) {
-        this.commentTime = commentTime;
-    }
 }
