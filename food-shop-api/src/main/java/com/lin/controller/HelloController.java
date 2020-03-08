@@ -22,6 +22,11 @@ public class HelloController {
 
     @GetMapping("/hello")
     public String hello() {
+        logger.debug("debug: hello~");
+        logger.info("info: hello~");
+        logger.warn("warn: hello~");
+        logger.error("error: hello~");
+
         return "Hello World";
     }
 
