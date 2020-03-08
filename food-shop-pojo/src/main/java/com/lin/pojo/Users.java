@@ -1,6 +1,5 @@
 package com.lin.pojo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -26,13 +25,11 @@ public class Users {
     private String username;
 
     @ApiModelProperty(value = "密码")
-    @JsonIgnore
     private String password;
 
     @ApiModelProperty(value = "昵称")
     private String nickname;
 
-    @JsonIgnore
     @ApiModelProperty(value = "真实姓名")
     private String realname;
 

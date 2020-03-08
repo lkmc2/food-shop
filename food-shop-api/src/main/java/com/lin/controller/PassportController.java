@@ -4,12 +4,17 @@ import cn.hutool.core.util.StrUtil;
 import com.lin.bo.UserBO;
 import com.lin.pojo.Users;
 import com.lin.service.UserService;
+import com.lin.utils.CookieUtils;
 import com.lin.utils.JsonResult;
+import com.lin.utils.JsonUtils;
 import com.lin.utils.Md5Utils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 认证服务 Controller
@@ -44,7 +49,9 @@ public class PassportController {
 
     @ApiOperation(value = "用户注册", notes = "用户注册")
     @PostMapping("/register")
-    public JsonResult register(@RequestBody UserBO userBO) {
+    public JsonResult register(@RequestBody UserBO userBO,
+                               HttpServletRequest request,
+                               HttpServletResponse response) {
         String username = userBO.getUsername();
         String password = userBO.getPassword();
         String confirmPassword = userBO.getConfirmPassword();
@@ -73,14 +80,22 @@ public class PassportController {
         }
 
         // 5.实现注册
-        userService.createUser(userBO);
+        Users userResult = userService.createUser(userBO);
+
+        // 设置用户信息的敏感字段为空
+        setNullProperty(userResult);
+
+        // 设置 cookie
+        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(userResult), true);
 
         return JsonResult.ok();
     }
 
     @ApiOperation(value = "用户登陆", notes = "用户登陆")
     @PostMapping("/login")
-    public JsonResult login(@RequestBody UserBO userBO) {
+    public JsonResult login(@RequestBody UserBO userBO,
+                            HttpServletRequest request,
+                            HttpServletResponse response) {
         String username = userBO.getUsername();
         String password = userBO.getPassword();
 
@@ -97,7 +112,26 @@ public class PassportController {
             return JsonResult.errorMsg("用户名或密码不正确");
         }
 
+        // 设置用户信息的敏感字段为空
+        setNullProperty(userResult);
+
+        // 设置 cookie
+        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(userResult), true);
+
         return JsonResult.ok(userResult);
+    }
+
+    /**
+     * 设置用户信息的敏感字段为空
+     * @param user 用户信息
+     */
+    private void setNullProperty(Users user) {
+        user.setPassword(null);
+        user.setMobile(null);
+        user.setEmail(null);
+        user.setCreateTime(null);
+        user.setUpdateTime(null);
+        user.setBirthday(null);
     }
 
 }
