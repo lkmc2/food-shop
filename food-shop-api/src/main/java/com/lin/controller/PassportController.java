@@ -4,6 +4,8 @@ import cn.hutool.core.util.StrUtil;
 import com.lin.bo.UserBO;
 import com.lin.service.UserService;
 import com.lin.utils.JsonResult;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * @author lkmc2
  * @date 2020/3/7 22:04
  */
+@Api(value = "注册登录", tags = {"用于注册登陆的相关接口"})
 @RestController
 @RequestMapping("passport")
 public class PassportController {
@@ -24,6 +27,7 @@ public class PassportController {
      * @param username 用户名
      * @return 用户名是否存在
      */
+    @ApiOperation(value = "用户名是否存在", notes = "用户名是否存在")
     @GetMapping("/usernameIsExist")
     public JsonResult usernameIsExist(@RequestParam String username) {
         // 1.判断用户名不能为空
@@ -46,6 +50,7 @@ public class PassportController {
      * @param userBO 用户信息
      * @return 是否注册成功
      */
+    @ApiOperation(value = "用户注册", notes = "用户注册")
     @PostMapping("/register")
     public JsonResult register(@RequestBody UserBO userBO) {
         String username = userBO.getUsername();
