@@ -76,4 +76,19 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
+    @Override
+    public Users queryUserForLogin(String username, String password) {
+        Example userExample = new Example(Users.class);
+
+        // 查询条件构建器
+        Example.Criteria criteria = userExample.createCriteria();
+        // where username = '传入的用户名'
+        criteria.andEqualTo("username", username);
+        // and password = '传入的密码'
+        criteria.andEqualTo("password", password);
+
+        return usersMapper.selectOneByExample(userExample);
+    }
+
 }

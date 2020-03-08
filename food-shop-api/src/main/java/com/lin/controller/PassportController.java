@@ -2,8 +2,10 @@ package com.lin.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.lin.bo.UserBO;
+import com.lin.pojo.Users;
 import com.lin.service.UserService;
 import com.lin.utils.JsonResult;
+import com.lin.utils.Md5Utils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +24,6 @@ public class PassportController {
     @Autowired
     private UserService userService;
 
-    /**
-     * 查询用户名是否存在
-     * @param username 用户名
-     * @return 用户名是否存在
-     */
     @ApiOperation(value = "用户名是否存在", notes = "用户名是否存在")
     @GetMapping("/usernameIsExist")
     public JsonResult usernameIsExist(@RequestParam String username) {
@@ -45,11 +42,6 @@ public class PassportController {
         return JsonResult.ok();
     }
 
-    /**
-     * 注册新用户
-     * @param userBO 用户信息
-     * @return 是否注册成功
-     */
     @ApiOperation(value = "用户注册", notes = "用户注册")
     @PostMapping("/register")
     public JsonResult register(@RequestBody UserBO userBO) {
@@ -84,6 +76,28 @@ public class PassportController {
         userService.createUser(userBO);
 
         return JsonResult.ok();
+    }
+
+    @ApiOperation(value = "用户登陆", notes = "用户登陆")
+    @PostMapping("/login")
+    public JsonResult login(@RequestBody UserBO userBO) {
+        String username = userBO.getUsername();
+        String password = userBO.getPassword();
+
+        // 1.判断用户名和密码非空
+        if (StrUtil.isBlank(username) ||
+                StrUtil.isBlank(password)) {
+            return JsonResult.errorMsg("用户名或密码不能为空");
+        }
+
+        // 2.实现登陆
+        Users userResult = userService.queryUserForLogin(username, Md5Utils.getMd5Str(password));
+
+        if (userResult == null) {
+            return JsonResult.errorMsg("用户名或密码不正确");
+        }
+
+        return JsonResult.ok(userResult);
     }
 
 }
