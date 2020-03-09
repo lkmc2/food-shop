@@ -39,14 +39,14 @@ spring:
 mybatis:
   type-aliases-package: com.lin.pojo         # 所有实体类所有包逻辑
   mapper-locations: classpath:mapper/*.xml   # mapper xml 所在位置
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 打印 sql
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 打印 sql
 
 
 # 打印sql
-#logging:
-#  level:
-#    com.lin.dao: debug
+logging:
+  level:
+    com.lin.dao: debug
 
 ############################################################
 #
