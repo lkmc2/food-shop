@@ -6,12 +6,15 @@ import com.lin.pojo.Category;
 import com.lin.service.CarouselService;
 import com.lin.service.CategoryService;
 import com.lin.utils.JsonResult;
+import com.lin.vo.CategoryVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -51,6 +54,19 @@ public class IndexController {
     @GetMapping("/cats")
     public JsonResult cats() {
         List<Category> list = categoryService.queryAllRootLevelCat();
+        return JsonResult.ok(list);
+    }
+
+    @ApiOperation(value = "获取商品分类子分类（二级和三级分类）", notes = "获取商品分类子分类（二级和三级分类）")
+    @GetMapping("/subCats/{rootCatId}")
+    public JsonResult subCats(
+            @ApiParam(name = "rootCatId", value = "一级分类id", required = true)
+            @PathVariable("rootCatId") Integer rootCatId) {
+        if (rootCatId == null) {
+            return JsonResult.errorMsg("分类不存在");
+        }
+
+        List<CategoryVO> list = categoryService.getSubCatList(rootCatId);
         return JsonResult.ok(list);
     }
 

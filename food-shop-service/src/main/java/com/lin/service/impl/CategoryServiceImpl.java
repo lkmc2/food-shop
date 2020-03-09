@@ -1,9 +1,11 @@
 package com.lin.service.impl;
 
 import com.lin.dao.CategoryMapper;
+import com.lin.dao.CategoryMapperCustom;
 import com.lin.enums.CategoryTypeEnum;
 import com.lin.pojo.Category;
 import com.lin.service.CategoryService;
+import com.lin.vo.CategoryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -23,6 +25,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryMapper categoryMapper;
 
+    @Autowired
+    private CategoryMapperCustom categoryMapperCustom;
+
     @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
     public List<Category> queryAllRootLevelCat() {
@@ -34,6 +39,12 @@ public class CategoryServiceImpl implements CategoryService {
         criteria.andEqualTo("type", CategoryTypeEnum.ROOT.type);
 
         return categoryMapper.selectByExample(example);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
+    @Override
+    public List<CategoryVO> getSubCatList(Integer rootCatId) {
+        return categoryMapperCustom.getSubCatList(rootCatId);
     }
 
 }

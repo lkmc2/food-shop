@@ -1,6 +1,6 @@
 package com.lin.dao;
 
-import com.lin.pojo.Category;
+import com.lin.vo.CategoryVO;
 
 import java.util.List;
 
@@ -16,6 +16,6 @@ public interface CategoryMapperCustom {
      * @param rootCatId 一级分类 id
      * @return 二级和三级分类信息列表
      */
-    List<Category> getSubCatList(Integer rootCatId);
+    List<CategoryVO> getSubCatList(Integer rootCatId);
 
 }
