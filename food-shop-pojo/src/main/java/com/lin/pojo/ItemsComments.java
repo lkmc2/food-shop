@@ -16,8 +16,8 @@ import java.util.Date;
  */
 @ApiModel("商品评价表实体类")
 @Data
-@Table(name = "item_comments")
-public class ItemComments {
+@Table(name = "items_comments")
+public class ItemsComments {
 
     @Id
     @ApiModelProperty(value = "主键id")
