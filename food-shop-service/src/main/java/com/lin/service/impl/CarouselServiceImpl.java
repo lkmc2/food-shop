@@ -35,9 +35,7 @@ public class CarouselServiceImpl implements CarouselService {
         // where is_show = '传入的展示状态'
         criteria.andEqualTo("isShow", isShow);
 
-        List<Carousel> result = carouselMapper.selectByExample(example);
-
-        return null;
+        return carouselMapper.selectByExample(example);
     }
 
 }
