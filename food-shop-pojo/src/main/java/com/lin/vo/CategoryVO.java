@@ -28,6 +28,6 @@ public class CategoryVO {
     private Integer fatherId;
 
     @ApiModelProperty(value = "三级分类列表")
-    private List<SubCategoryVO> subCategoryList;
+    private List<SubCategoryVO> subCatList;
 
 }

@@ -58,7 +58,7 @@ public class IndexController {
     }
 
     @ApiOperation(value = "获取商品分类子分类（二级和三级分类）", notes = "获取商品分类子分类（二级和三级分类）")
-    @GetMapping("/subCats/{rootCatId}")
+    @GetMapping("/subCat/{rootCatId}")
     public JsonResult subCats(
             @ApiParam(name = "rootCatId", value = "一级分类id", required = true)
             @PathVariable("rootCatId") Integer rootCatId) {

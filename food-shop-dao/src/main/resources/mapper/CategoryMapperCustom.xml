@@ -10,7 +10,7 @@
         <result column="fatherId" jdbcType="INTEGER" property="fatherId" />
 
         <!-- 三级分类列表 -->
-        <collection property="subCategoryList" ofType="com.lin.vo.SubCategoryVO">
+        <collection property="subCatList" ofType="com.lin.vo.SubCategoryVO">
             <id column="subId" jdbcType="INTEGER" property="subId" />
             <result column="subName" jdbcType="VARCHAR" property="subName" />
             <result column="subType" jdbcType="INTEGER" property="subType" />
