@@ -23,7 +23,7 @@ public class Category {
     @ApiModelProperty(value = "分类名称")
     private String name;
 
-    @ApiModelProperty(value = "分类类型")
+    @ApiModelProperty(value = "分类类型", notes = "1.一级大分类 2.二级分类 3.三级小分类")
     private String type;
 
     @Column(name = "father_id")
