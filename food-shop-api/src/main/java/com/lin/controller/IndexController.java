@@ -11,8 +11,6 @@ import com.lin.vo.NewItemsVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,8 +28,6 @@ import java.util.List;
 @RestController
 @RequestMapping("index")
 public class IndexController {
-
-    private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
 
     @Autowired
     private CarouselService carouselService;
