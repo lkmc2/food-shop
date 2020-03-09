@@ -1,11 +1,13 @@
 package com.lin.service.impl;
 
+import com.google.common.collect.ImmutableMap;
 import com.lin.dao.CategoryMapper;
 import com.lin.dao.CategoryMapperCustom;
 import com.lin.enums.CategoryTypeEnum;
 import com.lin.pojo.Category;
 import com.lin.service.CategoryService;
 import com.lin.vo.CategoryVO;
+import com.lin.vo.NewItemsVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -45,6 +47,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryVO> getSubCatList(Integer rootCatId) {
         return categoryMapperCustom.getSubCatList(rootCatId);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
+    @Override
+    public List<NewItemsVO> getSixNewItemLazy(Integer rootCatId) {
+        return categoryMapperCustom.getSixNewItemLazy(ImmutableMap.of("rootCatId", rootCatId));
     }
 
 }

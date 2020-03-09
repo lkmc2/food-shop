@@ -18,19 +18,56 @@
         </collection>
     </resultMap>
 
-  <select id="getSubCatList" resultMap="myCategoryVO">
-      select
-          father.id as id,
-          father.name as name,
-          father.type as type,
-          father.father_id as fatherId,
-          child.id as subId,
-          child.name as subName,
-          child.type as subType,
-          child.father_id as subFatherId
-      from category father
-      left join category child on father.id = child.father_id
-      where father.father_id = #{rootCatId,jdbcType=INTEGER}
-  </select>
+    <select id="getSubCatList" resultMap="myCategoryVO">
+        select
+            father.id as id,
+            father.name as name,
+            father.type as type,
+            father.father_id as fatherId,
+            child.id as subId,
+            child.name as subName,
+            child.type as subType,
+            child.father_id as subFatherId
+        from category father
+        left join category child on father.id = child.father_id
+        where father.father_id = #{rootCatId, jdbcType=INTEGER}
+    </select>
+
+    <!-- 最新商品列表 -->
+    <resultMap id="myNewItemsVO" type="com.lin.vo.NewItemsVO">
+        <id column="rootCatId" jdbcType="INTEGER" property="rootCatId" />
+        <result column="rootCatName" jdbcType="VARCHAR" property="rootCatName" />
+        <result column="slogan" jdbcType="VARCHAR" property="slogan" />
+        <result column="catImage" jdbcType="VARCHAR" property="catImage" />
+        <result column="bgColor" jdbcType="VARCHAR" property="bgColor" />
+
+        <!-- 六个最新商品的简单数据类型列表 -->
+        <collection property="simpleItemList" ofType="com.lin.vo.SimpleItemVO">
+            <id column="itemId" jdbcType="VARCHAR" property="itemId" />
+            <result column="itemName" jdbcType="VARCHAR" property="itemName" />
+            <result column="itemUrl" jdbcType="INTEGER" property="itemUrl" />
+        </collection>
+    </resultMap>
+
+    <select id="getSixNewItemLazy" resultMap="myNewItemsVO">
+        select
+            father.id as rootCatId,
+            father.name as rootCatName,
+            father.slogan as slogan,
+            father.cat_image as catImage,
+            father.bg_color as bgColor,
+            item.id as itemId,
+            item.item_name as itemName,
+            img.url as itemUrl,
+            item.create_time as createTime
+        from category father
+        left join items item on father.id = item.root_cat_id
+        left join items_img img on item.id = img.item_id
+        where father.type = 1
+          and item.root_cat_id = #{rootCatId, jdbcType=INTEGER}
+          and img.is_main = 1
+        order by item.create_time desc
+        limit 0, 6
+    </select>
 
 </mapper>

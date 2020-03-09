@@ -7,6 +7,7 @@ import com.lin.service.CarouselService;
 import com.lin.service.CategoryService;
 import com.lin.utils.JsonResult;
 import com.lin.vo.CategoryVO;
+import com.lin.vo.NewItemsVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -67,6 +68,19 @@ public class IndexController {
         }
 
         List<CategoryVO> list = categoryService.getSubCatList(rootCatId);
+        return JsonResult.ok(list);
+    }
+
+    @ApiOperation(value = "查询每个一级分类下的最新6条商品数据", notes = "查询每个一级分类下的最新6条商品数据")
+    @GetMapping("/sixNewItems/{rootCatId}")
+    public JsonResult sixNewItems(
+            @ApiParam(name = "rootCatId", value = "一级分类id", required = true)
+            @PathVariable("rootCatId") Integer rootCatId) {
+        if (rootCatId == null) {
+            return JsonResult.errorMsg("分类不存在");
+        }
+
+        List<NewItemsVO> list = categoryService.getSixNewItemLazy(rootCatId);
         return JsonResult.ok(list);
     }
 
