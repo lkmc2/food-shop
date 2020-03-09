@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lin.dao.CategoryMapperCustom">
+
+  <select id="getSubCatList" resultType="com.lin.pojo.Category">
+      select
+          father.id as id,
+          father.name as name,
+          father.type as type,
+          father.father_id as fatherId,
+          child.id as subId,
+          child.name as subName,
+          child.type as subType,
+          child.father_id as subFatherId
+      from category father
+      left join category child on father.id = child.father_id
+      where father.father_id = #{rootCatId,jdbcType=INTEGER}
+  </select>
+
+</mapper>
