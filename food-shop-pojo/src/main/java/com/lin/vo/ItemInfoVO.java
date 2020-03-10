@@ -23,12 +23,12 @@ public class ItemInfoVO {
     private Items item;
 
     @ApiModelProperty(value = "商品图片列表")
-    private List<ItemsImg> itemsImgList;
+    private List<ItemsImg> itemImgList;
 
     @ApiModelProperty(value = "商品规格列表")
-    private List<ItemsSpec> itemsSpecList;
+    private List<ItemsSpec> itemSpecList;
 
     @ApiModelProperty(value = "商品参数")
-    private ItemsParam itemsParam;
+    private ItemsParam itemParams;
 
 }

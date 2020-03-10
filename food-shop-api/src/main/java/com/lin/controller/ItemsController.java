@@ -51,9 +51,9 @@ public class ItemsController {
 
         ItemInfoVO itemInfoVO = new ItemInfoVO();
         itemInfoVO.setItem(item);
-        itemInfoVO.setItemsImgList(itemsImgList);
-        itemInfoVO.setItemsSpecList(itemsSpecList);
-        itemInfoVO.setItemsParam(itemsParam);
+        itemInfoVO.setItemImgList(itemsImgList);
+        itemInfoVO.setItemSpecList(itemsSpecList);
+        itemInfoVO.setItemParams(itemsParam);
 
         return JsonResult.ok(itemInfoVO);
     }
