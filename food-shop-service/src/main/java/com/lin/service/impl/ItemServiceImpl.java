@@ -1,10 +1,15 @@
 package com.lin.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Maps;
 import com.lin.dao.*;
 import com.lin.enums.CommentLevelEnum;
 import com.lin.pojo.*;
 import com.lin.service.ItemService;
+import com.lin.utils.PagedGridResult;
 import com.lin.vo.CommentLevelCountsVO;
+import com.lin.vo.ItemCommentVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -12,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商品服务实现类
@@ -35,6 +41,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Autowired
     private ItemCommentsMapper itemCommentsMapper;
+
+    @Autowired
+    private ItemsMapperCustom itemsMapperCustom;
 
     @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
@@ -118,6 +127,38 @@ public class ItemServiceImpl implements ItemService {
         }
 
         return itemCommentsMapper.selectCount(condition);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
+    @Override
+    public PagedGridResult queryPagedComments(String itemId, Integer level, Integer page, Integer pageSize) {
+        PageHelper.startPage(page, pageSize);
+
+        Map<String, Object> paramMap = Maps.newHashMap();
+        paramMap.put("itemId", itemId);
+        paramMap.put("level", level);
+
+        List<ItemCommentVO> list = itemsMapperCustom.queryItemComments(paramMap);
+
+        return setPagedGrid(list, page);
+    }
+
+    /**
+     * 设置分页结果信息
+     * @param list 查询结果列列表
+     * @param page 当前页
+     * @return 分页结果信息
+     */
+    private PagedGridResult setPagedGrid(List<?> list, Integer page) {
+        PageInfo<?> pageList = new PageInfo<>(list);
+
+        PagedGridResult grid = new PagedGridResult();
+        grid.setPage(page);
+        grid.setRows(list);
+        grid.setTotal(pageList.getPages());
+        grid.setRecords(pageList.getTotal());
+
+        return grid;
     }
 
 }

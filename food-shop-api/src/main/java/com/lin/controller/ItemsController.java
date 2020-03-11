@@ -1,11 +1,13 @@
 package com.lin.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.lin.pojo.Items;
 import com.lin.pojo.ItemsImg;
 import com.lin.pojo.ItemsParam;
 import com.lin.pojo.ItemsSpec;
 import com.lin.service.ItemService;
 import com.lin.utils.JsonResult;
+import com.lin.utils.PagedGridResult;
 import com.lin.vo.CommentLevelCountsVO;
 import com.lin.vo.ItemInfoVO;
 import io.swagger.annotations.Api;
@@ -24,7 +26,7 @@ import java.util.List;
 @Api(value = "商品接口", tags = {"商品信息展示的相关接口"})
 @RestController
 @RequestMapping("items")
-public class ItemsController {
+public class ItemsController extends BaseController {
 
     @Autowired
     private ItemService itemService;
@@ -34,7 +36,7 @@ public class ItemsController {
     public JsonResult info(
             @ApiParam(name = "itemId", value = "商品id", required = true)
             @PathVariable String itemId) {
-        if (itemId == null) {
+        if (StrUtil.isBlank(itemId)) {
             JsonResult.errorMsg(null);
         }
 
@@ -61,7 +63,7 @@ public class ItemsController {
     public JsonResult commentLevel(
             @ApiParam(name = "itemId", value = "商品id", required = true)
             @RequestParam String itemId) {
-        if (itemId == null) {
+        if (StrUtil.isBlank(itemId)) {
             JsonResult.errorMsg(null);
         }
 
@@ -71,5 +73,34 @@ public class ItemsController {
         return JsonResult.ok(countsVO);
     }
 
+    @ApiOperation(value = "查询商品评论", notes = "查询商品评论")
+    @GetMapping("/comments")
+    public JsonResult comments(
+            @ApiParam(name = "itemId", value = "商品id", required = true)
+            @RequestParam String itemId,
+            @ApiParam(name = "level", value = "评价等级")
+            @RequestParam Integer level,
+            @ApiParam(name = "page", value = "查询的页数")
+            @RequestParam Integer page,
+            @ApiParam(name = "pageSize", value = "分页每一页显示的条数")
+            @RequestParam Integer pageSize) {
+
+        if (StrUtil.isBlank(itemId)) {
+            JsonResult.errorMsg(null);
+        }
+
+        if (page == null) {
+            page = 1;
+        }
+
+        if (pageSize == null) {
+            pageSize = COMMENT_PAGE_SIZE;
+        }
+
+        // 分页查询商品评论列表
+        PagedGridResult grid = itemService.queryPagedComments(itemId, level, page, pageSize);
+
+        return JsonResult.ok(grid);
+    }
 
 }

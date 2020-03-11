@@ -39,6 +39,8 @@ spring:
 mybatis:
   type-aliases-package: com.lin.pojo         # 所有实体类所有包逻辑
   mapper-locations: classpath:mapper/*.xml   # mapper xml 所在位置
+  configuration:
+    map-underscore-to-camel-case: true       # 下划线自动转成驼峰命名
 #  configuration:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 打印 sql
 
@@ -53,7 +55,13 @@ logging:
 # mybatis 通用 mapper 配置
 #
 ############################################################
+# 通用 Mapper 配置
 mapper:
   mappers: com.lin.my.mapper.MyMapper # 通用 Mapper 的基础类所在位置
   not-empty: false # 在进行数据库操作的时候，判断表达式 username != null 时，是否追加 username != '' 的判断
   identity: MYSQL
+
+# 分页插件配置
+pagehelper:
+  helper-dialect: mysql
+  support-methods-arguments: true
