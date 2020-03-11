@@ -6,15 +6,13 @@ import com.lin.pojo.ItemsParam;
 import com.lin.pojo.ItemsSpec;
 import com.lin.service.ItemService;
 import com.lin.utils.JsonResult;
+import com.lin.vo.CommentLevelCountsVO;
 import com.lin.vo.ItemInfoVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -56,6 +54,21 @@ public class ItemsController {
         itemInfoVO.setItemParams(itemsParam);
 
         return JsonResult.ok(itemInfoVO);
+    }
+
+    @ApiOperation(value = "查询商品评价等级", notes = "查询商品评价等级")
+    @GetMapping("/commentLevel")
+    public JsonResult commentLevel(
+            @ApiParam(name = "itemId", value = "商品id", required = true)
+            @RequestParam String itemId) {
+        if (itemId == null) {
+            JsonResult.errorMsg(null);
+        }
+
+        // 根据商品 id 查询商品的评价等级数量
+        CommentLevelCountsVO countsVO = itemService.queryCommentCounts(itemId);
+
+        return JsonResult.ok(countsVO);
     }
 
 
