@@ -7,6 +7,7 @@ import com.lin.dao.*;
 import com.lin.enums.CommentLevelEnum;
 import com.lin.pojo.*;
 import com.lin.service.ItemService;
+import com.lin.utils.DesensitizationUtil;
 import com.lin.utils.PagedGridResult;
 import com.lin.vo.CommentLevelCountsVO;
 import com.lin.vo.ItemCommentVO;
@@ -139,6 +140,11 @@ public class ItemServiceImpl implements ItemService {
         paramMap.put("level", level);
 
         List<ItemCommentVO> list = itemsMapperCustom.queryItemComments(paramMap);
+
+        for (ItemCommentVO vo : list) {
+            // 对用户昵称进行脱敏加密
+            vo.setNickname(DesensitizationUtil.commonDisplay(vo.getNickname()));
+        }
 
         return setPagedGrid(list, page);
     }
