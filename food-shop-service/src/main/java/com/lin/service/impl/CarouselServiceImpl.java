@@ -17,13 +17,12 @@ import java.util.List;
  * @date 2020/3/7 21:54
  */
 @Service
+@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
 public class CarouselServiceImpl implements CarouselService {
 
     @Autowired
     private CarouselMapper carouselMapper;
 
-
-    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
     public List<Carousel> queryAll(Integer isShow) {
         Example example = new Example(Carousel.class);

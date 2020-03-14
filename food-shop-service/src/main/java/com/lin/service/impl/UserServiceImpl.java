@@ -22,6 +22,7 @@ import java.util.Date;
  * @date 2020/3/7 21:54
  */
 @Service
+@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -33,7 +34,6 @@ public class UserServiceImpl implements UserService {
     /** 用户头像地址 **/
     private static final String USER_FACE_URL = "https://c-ssl.duitang.com/uploads/item/201704/10/20170410095843_SEvMy.jpeg";
 
-    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
     public boolean queryUsernameIsExist(String username) {
         Example userExample = new Example(Users.class);
@@ -76,7 +76,6 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
     public Users queryUserForLogin(String username, String password) {
         Example userExample = new Example(Users.class);

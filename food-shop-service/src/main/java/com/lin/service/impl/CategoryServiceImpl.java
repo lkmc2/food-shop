@@ -22,6 +22,7 @@ import java.util.List;
  * @date 2020/3/7 21:54
  */
 @Service
+@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
 public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
@@ -30,7 +31,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryMapperCustom categoryMapperCustom;
 
-    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
     public List<Category> queryAllRootLevelCat() {
         Example example = new Example(Category.class);
@@ -43,13 +43,11 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.selectByExample(example);
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
     public List<CategoryVO> getSubCatList(Integer rootCatId) {
         return categoryMapperCustom.getSubCatList(rootCatId);
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
     public List<NewItemsVO> getSixNewItemLazy(Integer rootCatId) {
         return categoryMapperCustom.getSixNewItemLazy(ImmutableMap.of("rootCatId", rootCatId));
