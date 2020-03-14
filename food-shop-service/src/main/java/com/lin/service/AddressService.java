@@ -1,5 +1,6 @@
 package com.lin.service;
 
+import com.lin.bo.AddressBO;
 import com.lin.pojo.UserAddress;
 
 import java.util.List;
@@ -17,5 +18,11 @@ public interface AddressService {
      * @return 收货地址列表
      */
     List<UserAddress> queryAll(String userId);
+
+    /**
+     * 用户新增地址
+     * @param addressBO 地址信息
+     */
+    void addNewUserAddress(AddressBO addressBO);
 
 }
