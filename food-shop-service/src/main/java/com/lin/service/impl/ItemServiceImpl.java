@@ -176,4 +176,17 @@ public class ItemServiceImpl implements ItemService {
         return setPagedGrid(list, page);
     }
 
+    @Override
+    public PagedGridResult searchItemsByCatId(String catId, String sort, Integer page, Integer pageSize) {
+        Map<String, Object> paramMap = Maps.newHashMap();
+        paramMap.put("catId", catId);
+        paramMap.put("sort", sort);
+
+        PageHelper.startPage(page, pageSize);
+
+        List<SearchItemsVO> list = itemsMapperCustom.searchItemsByCat(paramMap);
+
+        return setPagedGrid(list, page);
+    }
+
 }
