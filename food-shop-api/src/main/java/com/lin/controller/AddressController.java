@@ -6,9 +6,7 @@ import com.lin.pojo.UserAddress;
 import com.lin.service.AddressService;
 import com.lin.utils.JsonResult;
 import com.lin.utils.MobileEmailUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -122,6 +120,26 @@ public class AddressController {
 
         // 更新用户地址
         addressService.updateUserAddress(addressBO);
+
+        return JsonResult.ok();
+    }
+
+    @ApiOperation(value = "用户删除地址", notes = "用户删除地址")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "userId", value = "用户id", required = true),
+        @ApiImplicitParam(name = "addressId", value = "地址id", required = true)
+    })
+    @PostMapping("/delete")
+    public JsonResult delete(
+            @RequestParam String userId,
+            @RequestParam String addressId) {
+
+        if (StrUtil.isBlank(userId) || StrUtil.isBlank(addressId)) {
+            return JsonResult.errorMsg("");
+        }
+
+        // 删除用户地址
+        addressService.deleteUserAddress(userId, addressId);
 
         return JsonResult.ok();
     }
