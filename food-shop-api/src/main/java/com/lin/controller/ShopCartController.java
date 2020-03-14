@@ -31,7 +31,7 @@ public class ShopCartController extends BaseController {
             HttpServletResponse response) {
 
         if (StrUtil.isBlank(userId)) {
-            JsonResult.errorMsg("");
+            return JsonResult.errorMsg("");
         }
 
         System.out.println(shopCartBO);

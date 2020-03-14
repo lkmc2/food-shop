@@ -10,6 +10,7 @@ import com.lin.utils.JsonResult;
 import com.lin.utils.PagedGridResult;
 import com.lin.vo.CommentLevelCountsVO;
 import com.lin.vo.ItemInfoVO;
+import com.lin.vo.ShopCartVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -37,7 +38,7 @@ public class ItemsController extends BaseController {
             @ApiParam(name = "itemId", value = "商品id", required = true)
             @PathVariable String itemId) {
         if (StrUtil.isBlank(itemId)) {
-            JsonResult.errorMsg(null);
+            return JsonResult.errorMsg(null);
         }
 
         // 根据商品 id 查询商品详情
@@ -64,7 +65,7 @@ public class ItemsController extends BaseController {
             @ApiParam(name = "itemId", value = "商品id", required = true)
             @RequestParam String itemId) {
         if (StrUtil.isBlank(itemId)) {
-            JsonResult.errorMsg(null);
+            return JsonResult.errorMsg(null);
         }
 
         // 根据商品 id 查询商品的评价等级数量
@@ -86,7 +87,7 @@ public class ItemsController extends BaseController {
             @RequestParam Integer pageSize) {
 
         if (StrUtil.isBlank(itemId)) {
-            JsonResult.errorMsg(null);
+            return JsonResult.errorMsg(null);
         }
 
         if (page == null) {
@@ -116,7 +117,7 @@ public class ItemsController extends BaseController {
             @RequestParam Integer pageSize) {
 
         if (StrUtil.isBlank(keywords)) {
-            JsonResult.errorMsg(null);
+            return JsonResult.errorMsg(null);
         }
 
         if (page == null) {
@@ -146,7 +147,7 @@ public class ItemsController extends BaseController {
             @RequestParam Integer pageSize) {
 
         if (StrUtil.isBlank(catId)) {
-            JsonResult.errorMsg(null);
+            return JsonResult.errorMsg(null);
         }
 
         if (page == null) {
@@ -161,6 +162,22 @@ public class ItemsController extends BaseController {
         PagedGridResult grid = itemService.searchItemsByCatId(catId, sort, page, pageSize);
 
         return JsonResult.ok(grid);
+    }
+
+    @ApiOperation(value = "根据商品规格id查找最新的商品数据", notes = "根据商品规格id查找最新的商品数据，用于用户长时间未登录网站，刷新购物车中的数据（主要是商品价格）")
+    @GetMapping("/refresh")
+    public JsonResult refresh(
+            @ApiParam(name = "itemSpecIds", value = "商品分类id，使用英文逗号拼接", required = true, example = "1001,1003,1005")
+            @RequestParam String itemSpecIds) {
+
+        if (StrUtil.isBlank(itemSpecIds)) {
+            return JsonResult.ok();
+        }
+
+        // 购物车列表
+        List<ShopCartVO> list = itemService.queryItemsBySpecIds(itemSpecIds);
+
+        return JsonResult.ok(list);
     }
 
 }

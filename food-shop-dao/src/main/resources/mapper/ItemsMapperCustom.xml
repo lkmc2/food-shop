@@ -94,4 +94,22 @@
   <!-- c：根据销量排序 -->
   <!-- p：根据价格排序 -->
 
+  <select id="queryItemsBySpecIds" parameterType="list" resultType="com.lin.vo.ShopCartVO">
+      select
+          item.id as itemId,
+          item.item_name,
+          img.url as itemImgUrl,
+          spec.id as specId,
+          spec.price_discount,
+          spec.price_normal
+      from items_spec spec
+             left join items item on spec.item_id = item.id
+             left join items_img img on spec.item_id = img.item_id
+      where img.is_main = 1
+        and spec.id in
+      <foreach collection="paramsList" index="index" item="specId" open="(" separator="," close=")">
+        #{specId}
+      </foreach>
+  </select>
+
 </mapper>

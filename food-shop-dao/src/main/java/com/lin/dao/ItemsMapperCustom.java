@@ -2,6 +2,8 @@ package com.lin.dao;
 
 import com.lin.vo.ItemCommentVO;
 import com.lin.vo.SearchItemsVO;
+import com.lin.vo.ShopCartVO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -38,4 +40,12 @@ public interface ItemsMapperCustom {
      * @return 商品搜索结果列表
      */
     List<SearchItemsVO> searchItemsByCat(Map<String, Object> paramMap);
+
+    /**
+     * 根据规格 id 查询购物车列表
+     * @param specIdsList 规格 id 列表
+     * @return 购物车列表
+     */
+    List<ShopCartVO> queryItemsBySpecIds(@Param("paramsList") List<String> specIdsList);
+
 }

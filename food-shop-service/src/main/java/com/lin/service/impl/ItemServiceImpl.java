@@ -1,5 +1,6 @@
 package com.lin.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
@@ -12,6 +13,7 @@ import com.lin.utils.PagedGridResult;
 import com.lin.vo.CommentLevelCountsVO;
 import com.lin.vo.ItemCommentVO;
 import com.lin.vo.SearchItemsVO;
+import com.lin.vo.ShopCartVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -187,6 +189,13 @@ public class ItemServiceImpl implements ItemService {
         List<SearchItemsVO> list = itemsMapperCustom.searchItemsByCat(paramMap);
 
         return setPagedGrid(list, page);
+    }
+
+    @Override
+    public List<ShopCartVO> queryItemsBySpecIds(String specIds) {
+        List<String> specIdsList = StrUtil.split(specIds, ',');
+
+        return itemsMapperCustom.queryItemsBySpecIds(specIdsList);
     }
 
 }
