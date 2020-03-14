@@ -23,7 +23,7 @@ public class SubmitOrderBO {
     private String addressId;
 
     @ApiModelProperty(value = "支付方式", example = "1", required = true)
-    private String payMethod;
+    private Integer payMethod;
 
     @ApiModelProperty(value = "买家留言", example = "不加辣", required = true)
     private String leftMsg;

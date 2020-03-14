@@ -1,6 +1,7 @@
 package com.lin.controller;
 
 import com.lin.bo.SubmitOrderBO;
+import com.lin.enums.PayMethodEnum;
 import com.lin.utils.JsonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,9 +20,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("orders")
 public class OrdersController {
 
+
+
     @ApiOperation(value = "用户下单", notes = "用户下单")
     @PostMapping("/create")
     public JsonResult create(@RequestBody SubmitOrderBO submitOrderBO) {
+        // 支付方式
+        Integer payMethod = submitOrderBO.getPayMethod();
+
+        if (!payMethod.equals(PayMethodEnum.WEIXIN.type)
+            && !payMethod.equals(PayMethodEnum.ALIPAY.type)) {
+            return JsonResult.errorMsg("支付方式不支持！");
+        }
 
         System.out.println(submitOrderBO);
 
