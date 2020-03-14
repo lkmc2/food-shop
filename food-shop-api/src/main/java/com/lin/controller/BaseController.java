@@ -7,6 +7,10 @@ package com.lin.controller;
  */
 public class BaseController {
 
+    /** 每页显示条数 **/
+    protected static final int PAGE_SIZE = 20;
+
+    /** 每页评论显示条数 **/
     protected static final int COMMENT_PAGE_SIZE = 10;
 
 }

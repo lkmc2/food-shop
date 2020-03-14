@@ -103,4 +103,34 @@ public class ItemsController extends BaseController {
         return JsonResult.ok(grid);
     }
 
+    @ApiOperation(value = "搜索商品列表", notes = "搜索商品列表")
+    @GetMapping("/search")
+    public JsonResult search(
+            @ApiParam(name = "keywords", value = "关键字", required = true)
+            @RequestParam String keywords,
+            @ApiParam(name = "sort", value = "排序")
+            @RequestParam String sort,
+            @ApiParam(name = "page", value = "查询的页数")
+            @RequestParam Integer page,
+            @ApiParam(name = "pageSize", value = "分页每一页显示的条数")
+            @RequestParam Integer pageSize) {
+
+        if (StrUtil.isBlank(keywords)) {
+            JsonResult.errorMsg(null);
+        }
+
+        if (page == null) {
+            page = 1;
+        }
+
+        if (pageSize == null) {
+            pageSize = PAGE_SIZE;
+        }
+
+        // 分页查询商品评论列表
+        PagedGridResult grid = itemService.searchItems(keywords, sort, page, pageSize);
+
+        return JsonResult.ok(grid);
+    }
+
 }

@@ -11,6 +11,7 @@ import com.lin.utils.DesensitizationUtil;
 import com.lin.utils.PagedGridResult;
 import com.lin.vo.CommentLevelCountsVO;
 import com.lin.vo.ItemCommentVO;
+import com.lin.vo.SearchItemsVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -26,6 +27,7 @@ import java.util.Map;
  * @date 2020/3/10 22:47
  */
 @Service
+@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
 public class ItemServiceImpl implements ItemService {
 
     @Autowired
@@ -46,13 +48,11 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     private ItemsMapperCustom itemsMapperCustom;
 
-    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
     public Items queryItemById(String id) {
         return itemsMapper.selectByPrimaryKey(id);
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
     public List<ItemsImg> queryItemImgList(String itemId) {
         Example example = new Example(ItemsImg.class);
@@ -65,7 +65,6 @@ public class ItemServiceImpl implements ItemService {
         return itemsImgMapper.selectByExample(example);
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
     public List<ItemsSpec> queryItemSpecList(String itemId) {
         Example example = new Example(ItemsSpec.class);
@@ -78,7 +77,6 @@ public class ItemServiceImpl implements ItemService {
         return itemsSpecMapper.selectByExample(example);
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
     public ItemsParam queryItemParam(String itemId) {
         Example example = new Example(ItemsParam.class);
@@ -91,7 +89,6 @@ public class ItemServiceImpl implements ItemService {
         return itemsParamMapper.selectOneByExample(example);
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
     public CommentLevelCountsVO queryCommentCounts(String itemId) {
         // 好评数
@@ -130,7 +127,6 @@ public class ItemServiceImpl implements ItemService {
         return itemCommentsMapper.selectCount(condition);
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
     public PagedGridResult queryPagedComments(String itemId, Integer level, Integer page, Integer pageSize) {
         PageHelper.startPage(page, pageSize);
@@ -165,6 +161,19 @@ public class ItemServiceImpl implements ItemService {
         grid.setRecords(pageList.getTotal());
 
         return grid;
+    }
+
+    @Override
+    public PagedGridResult searchItems(String keywords, String sort, Integer page, Integer pageSize) {
+        Map<String, Object> paramMap = Maps.newHashMap();
+        paramMap.put("keywords", keywords);
+        paramMap.put("sort", sort);
+
+        PageHelper.startPage(page, pageSize);
+
+        List<SearchItemsVO> list = itemsMapperCustom.searchItems(paramMap);
+
+        return setPagedGrid(list, page);
     }
 
 }
