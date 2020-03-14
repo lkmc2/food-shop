@@ -3,6 +3,7 @@ package com.lin.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import com.lin.bo.AddressBO;
 import com.lin.dao.UserAddressMapper;
+import com.lin.enums.YesOrNoEnum;
 import com.lin.pojo.UserAddress;
 import com.lin.service.AddressService;
 import org.n3r.idworker.Sid;
@@ -87,6 +88,31 @@ public class AddressServiceImpl implements AddressService {
         address.setUserId(userId);
 
         userAddressMapper.delete(address);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Override
+    public void updateUserAddressToBeDefault(String userId, String addressId) {
+        // 1.查找默认地址，设置为不默认
+        UserAddress queryAddress = new UserAddress();
+        queryAddress.setId(addressId);
+        queryAddress.setUserId(userId);
+        queryAddress.setIsDefault(YesOrNoEnum.YES.type);
+
+        List<UserAddress> addressList = userAddressMapper.select(queryAddress);
+
+        for (UserAddress address : addressList) {
+            address.setIsDefault(YesOrNoEnum.NO.type);
+            userAddressMapper.updateByPrimaryKeySelective(address);
+        }
+
+        // 2.根据地址 id 修改为默认地址
+        UserAddress defaultAddress = new UserAddress();
+        defaultAddress.setId(addressId);
+        defaultAddress.setUserId(userId);
+        defaultAddress.setIsDefault(YesOrNoEnum.YES.type);
+
+        userAddressMapper.updateByPrimaryKeySelective(defaultAddress);
     }
 
 }

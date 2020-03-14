@@ -38,4 +38,11 @@ public interface AddressService {
      */
     void deleteUserAddress(String userId, String addressId);
 
+    /**
+     * 修改默认地址
+     * @param userId 用户 id
+     * @param addressId 地址 id
+     */
+    void updateUserAddressToBeDefault(String userId, String addressId);
+
 }

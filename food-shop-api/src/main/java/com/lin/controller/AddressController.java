@@ -144,4 +144,24 @@ public class AddressController {
         return JsonResult.ok();
     }
 
+    @ApiOperation(value = "用户设置默认地址", notes = "用户设置默认地址")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "用户id", required = true),
+            @ApiImplicitParam(name = "addressId", value = "地址id", required = true)
+    })
+    @PostMapping("/setDefault")
+    public JsonResult setDefault(
+            @RequestParam String userId,
+            @RequestParam String addressId) {
+
+        if (StrUtil.isBlank(userId) || StrUtil.isBlank(addressId)) {
+            return JsonResult.errorMsg("");
+        }
+
+        // 修改默认地址
+        addressService.updateUserAddressToBeDefault(userId, addressId);
+
+        return JsonResult.ok();
+    }
+
 }
