@@ -51,6 +51,6 @@ public class OrderItems {
 
     @Column(name = "buy_counts")
     @ApiModelProperty(value = "购买数量")
-    private String buyCounts;
+    private Integer buyCounts;
 
 }

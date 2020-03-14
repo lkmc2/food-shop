@@ -35,7 +35,7 @@ public class ItemsImg {
 
     @Column(name = "is_main")
     @ApiModelProperty(value = "是否主图", notes = "1：是，0：否")
-    private String isMain;
+    private Integer isMain;
 
     @Column(name = "create_time")
     @ApiModelProperty(value = "创建时间")

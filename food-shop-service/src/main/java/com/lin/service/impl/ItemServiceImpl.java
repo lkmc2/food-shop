@@ -6,6 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
 import com.lin.dao.*;
 import com.lin.enums.CommentLevelEnum;
+import com.lin.enums.YesOrNoEnum;
 import com.lin.pojo.*;
 import com.lin.service.ItemService;
 import com.lin.utils.DesensitizationUtil;
@@ -196,6 +197,22 @@ public class ItemServiceImpl implements ItemService {
         List<String> specIdsList = StrUtil.split(specIds, ',');
 
         return itemsMapperCustom.queryItemsBySpecIds(specIdsList);
+    }
+
+    @Override
+    public ItemsSpec queryItemSpecById(String specId) {
+        return itemsSpecMapper.selectByPrimaryKey(specId);
+    }
+
+    @Override
+    public String queryItemMainImgById(String itemId) {
+        ItemsImg itemsImg = new ItemsImg();
+        itemsImg.setItemId(itemId);
+        itemsImg.setIsMain(YesOrNoEnum.YES.type);
+
+        ItemsImg result = itemsImgMapper.selectOne(itemsImg);
+
+        return result != null ? result.getUrl() : "";
     }
 
 }

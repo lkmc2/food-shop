@@ -2,11 +2,12 @@ package com.lin.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.lin.bo.SubmitOrderBO;
+import com.lin.dao.OrderItemsMapper;
 import com.lin.dao.OrdersMapper;
 import com.lin.enums.YesOrNoEnum;
-import com.lin.pojo.Orders;
-import com.lin.pojo.UserAddress;
+import com.lin.pojo.*;
 import com.lin.service.AddressService;
+import com.lin.service.ItemService;
 import com.lin.service.OrderService;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,13 @@ public class OrderServiceImpl implements OrderService {
     private OrdersMapper ordersMapper;
 
     @Autowired
+    private OrderItemsMapper orderItemsMapper;
+
+    @Autowired
     private AddressService addressService;
+
+    @Autowired
+    private ItemService itemService;
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @Override
@@ -64,11 +71,8 @@ public class OrderServiceImpl implements OrderService {
                 address.getDistrict(),
                 address.getDetail()));
 
-        // 费用信息
-//        newOrder.setTotalAmount();
-//        newOrder.setRealPayAmount();
         // 邮费
-        newOrder.setPostAmount(0);
+        newOrder.setPostAmount(postAmount);
 
         newOrder.setPayMethod(payMethod);
         newOrder.setLeftMsg(leftMsg);
@@ -79,6 +83,54 @@ public class OrderServiceImpl implements OrderService {
         newOrder.setUpdateTime(new Date());
 
         // 2.循环根据 itemSpecIds 保存订单商品信息表
+        String[] itemSpecIdArr = StrUtil.split(itemSpecIds, ",");
+
+        // 商品原价累计
+        int totalAmount = 0;
+
+        // 优惠后的实际支付价格累计
+        int realPayAmount = 0;
+
+        for (String itemSpecId : itemSpecIdArr) {
+            // todo：整合 redis 后，商品购买数量重新从 redis 的购物车中获取
+            int buyCounts = 1;
+
+            // 2.1 根据规格 id ，查询规格的具体信息，主要获取价格
+            ItemsSpec itemsSpec = itemService.queryItemSpecById(itemSpecId);
+
+            totalAmount += itemsSpec.getPriceNormal() * buyCounts;
+            realPayAmount += itemsSpec.getPriceDiscount() * buyCounts;
+
+            // 2.2 根据规格 id ，获取商品信息以及商品图片
+            String itemId = itemsSpec.getItemId();
+
+            Items item = itemService.queryItemById(itemId);
+
+            String imgUrl = itemService.queryItemMainImgById(itemId);
+
+            // 2.3 循环保存子订单数据到数据库
+            String subOrderId = sid.nextShort();
+
+            OrderItems subOrderItem = new OrderItems();
+            subOrderItem.setId(subOrderId);
+            subOrderItem.setOrderId(orderId);
+            subOrderItem.setItemId(itemId);
+            subOrderItem.setItemName(item.getItemName());
+            subOrderItem.setItemImg(imgUrl);
+            subOrderItem.setBuyCounts(buyCounts);
+            subOrderItem.setItemSpecId(itemSpecId);
+            subOrderItem.setItemSpecName(itemsSpec.getName());
+            subOrderItem.setPrice(itemsSpec.getPriceDiscount());
+
+            orderItemsMapper.insert(subOrderItem);
+        }
+
+        // 费用信息
+        newOrder.setTotalAmount(totalAmount);
+        newOrder.setRealPayAmount(realPayAmount);
+
+        ordersMapper.insert(newOrder);
+
         // 3.保存订单状态表
     }
 
