@@ -88,6 +88,9 @@ public class PassportController {
         // 设置 cookie
         CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(userResult), true);
 
+        // todo：生成用户token，存入redis会话
+        // todo：同步购物车数据
+
         return JsonResult.ok();
     }
 
@@ -117,6 +120,9 @@ public class PassportController {
 
         // 设置 cookie
         CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(userResult), true);
+
+        // todo：生成用户token，存入redis会话
+        // todo：同步购物车数据
 
         return JsonResult.ok(userResult);
     }
