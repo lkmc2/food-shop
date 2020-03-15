@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * 用户信息（用户中心使用）
  * @author lkmc2
@@ -38,6 +40,6 @@ public class CenterUserBO {
     private Integer sex;
 
     @ApiModelProperty(value = "生日", example = "2000-01-01")
-    private String birthday;
+    private Date birthday;
 
 }

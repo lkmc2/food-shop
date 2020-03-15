@@ -30,7 +30,7 @@ public class CenterUserController extends BaseController {
     private CenterUserService centerUserService;
 
     @ApiOperation(value = "修改用户信息", notes = "修改用户信息")
-    @GetMapping("/update")
+    @PostMapping("/update")
     public JsonResult update(
             @ApiParam(name = "userId", value = "用户id", required = true)
             @RequestParam String userId,
