@@ -1,5 +1,7 @@
 package com.lin.service.impl;
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.lin.bo.SubmitOrderBO;
 import com.lin.dao.OrderItemsMapper;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 订单服务实现类
@@ -210,6 +213,42 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderStatus queryOrderStatusInfo(String orderId) {
         return orderStatusMapper.selectByPrimaryKey(orderId);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Override
+    public void closeOrder() {
+        // 查询所有未支付的订单，判断时间是否超时（1 天），超时则关闭交易
+        OrderStatus queryStatus = new OrderStatus();
+        queryStatus.setOrderStatus(OrderStatusEnum.WAIT_PAY.type);
+
+        List<OrderStatus> list = orderStatusMapper.select(queryStatus);
+
+        for (OrderStatus orderStatus : list) {
+            Date createTime = orderStatus.getCreateTime();
+            DateTime currentTime = DateUtil.date();
+
+            long days = DateUtil.betweenDay(createTime, currentTime, false);
+
+            if (days >= 1) {
+                // 超过 1 天，关闭订单
+                doCloseOrder(orderStatus.getOrderId());
+            }
+        }
+    }
+
+    /**
+     * 关闭指定订单
+     * @param orderId 订单 id
+     */
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void doCloseOrder(String orderId) {
+        OrderStatus closeStatus = new OrderStatus();
+        closeStatus.setOrderId(orderId);
+        closeStatus.setOrderStatus(OrderStatusEnum.CLOSE.type);
+        closeStatus.setCloseTime(new Date());
+
+        orderStatusMapper.updateByPrimaryKeySelective(closeStatus);
     }
 
 }
