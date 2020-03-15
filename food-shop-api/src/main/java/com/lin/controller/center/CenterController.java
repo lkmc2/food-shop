@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author lkmc2
  * @date 2020/3/15 20:54
  */
-@Api(value = "用户中心", tags = "用户中心展示的相关接口")
+@Api(value = "Center - 用户中心", tags = "用户中心展示的相关接口")
 @RestController
 @RequestMapping("center")
 public class CenterController {

@@ -1,5 +1,6 @@
 package com.lin.service.center;
 
+import com.lin.bo.center.CenterUserBO;
 import com.lin.pojo.Users;
 
 /**
@@ -15,5 +16,13 @@ public interface CenterUserService {
      * @return 用户信息
      */
     Users queryUserInfo(String userId);
+
+    /**
+     * 修改用户信息
+     * @param userId 用户 id
+     * @param centerUserBO 用户信息
+     * @return 用户信息
+     */
+    Users updateUserInfo(String userId, CenterUserBO centerUserBO);
 
 }
