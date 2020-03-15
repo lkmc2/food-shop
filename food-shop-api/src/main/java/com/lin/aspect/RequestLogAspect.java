@@ -17,6 +17,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -109,6 +111,11 @@ public class RequestLogAspect {
         Map<String, Object> requestParams = new HashMap<>();
         for (int i = 0; i < paramNames.length; i++) {
             Object value = paramValues[i];
+
+            // 这两种类型无法序列化
+            if (value instanceof ServletRequest || value instanceof ServletResponse) {
+                continue;
+            }
 
             // 如果是文件对象
             if (value instanceof MultipartFile) {

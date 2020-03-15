@@ -1,5 +1,6 @@
 package com.lin.controller;
 
+import com.google.common.base.Preconditions;
 import com.lin.bo.SubmitOrderBO;
 import com.lin.enums.OrderStatusEnum;
 import com.lin.enums.PayMethodEnum;
@@ -12,8 +13,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +33,9 @@ public class OrdersController extends BaseController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
     @ApiOperation(value = "用户下单", notes = "用户下单")
     @PostMapping("/create")
     public JsonResult create(@RequestBody SubmitOrderBO submitOrderBO,
@@ -44,7 +49,7 @@ public class OrdersController extends BaseController {
             return JsonResult.errorMsg("支付方式不支持！");
         }
 
-        System.out.println(submitOrderBO);
+//        System.out.println(submitOrderBO);
 
         // 1.创建订单
         OrderVO orderVO = orderService.createOrder(submitOrderBO);
@@ -52,16 +57,33 @@ public class OrdersController extends BaseController {
         // 订单 id
         String orderId = orderVO.getOrderId();
 
-        // 商户订单 VO
-        MerchantOrdersVO merchantOrdersVO = orderVO.getMerchantOrdersVO();
-        // 设置通知商户支付成功的 url
-        merchantOrdersVO.setReturnUrl(PAY_RETURN_URL);
 
         // 2.创建订单以后，移除购物车中已结算（已提交）的商品
         // todo：整合 redis 之后，完善购物车中的已结算商品清除，并且同步到前端的 cookie
         CookieUtils.setCookie(request, response, FOOD_SHOP_SHOP_CART, "", true);
 
         // 3.向支付中心发送当前订单，用于保存支付中心的订单数据
+        // 商户订单 VO
+        MerchantOrdersVO merchantOrdersVO = orderVO.getMerchantOrdersVO();
+        // 设置通知商户支付成功的 url
+        merchantOrdersVO.setReturnUrl(PAY_RETURN_URL);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("userId", "jack");
+        headers.add("password", "123456");
+
+        HttpEntity<MerchantOrdersVO> entity = new HttpEntity<>(merchantOrdersVO, headers);
+
+        ResponseEntity<JsonResult> responseEntity = restTemplate.postForEntity(PAYMENT_URL, entity, JsonResult.class);
+
+        JsonResult paymentResult = responseEntity.getBody();
+
+        Preconditions.checkNotNull(paymentResult, "支付中心响应结果不能为空");
+
+        if (paymentResult.getStatus() != HttpStatus.OK.value()) {
+            return JsonResult.errorMsg("支付中心订单创建失败，请联系管理员！");
+        }
 
         return JsonResult.ok(orderId);
     }
