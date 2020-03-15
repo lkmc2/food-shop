@@ -1,17 +1,17 @@
 package com.lin.controller;
 
 import com.lin.bo.SubmitOrderBO;
+import com.lin.enums.OrderStatusEnum;
 import com.lin.enums.PayMethodEnum;
 import com.lin.service.OrderService;
 import com.lin.utils.CookieUtils;
 import com.lin.utils.JsonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,6 +54,18 @@ public class OrdersController extends BaseController {
         // 3.向支付中心发送当前订单，用于保存支付中心的订单数据
 
         return JsonResult.ok(orderId);
+    }
+
+    @ApiOperation(value = "通知商户订单已支付", notes = "通知商户订单已支付")
+    @PostMapping("/notifyMerchantOrderPaid")
+    public Integer notifyMerchantOrderPaid(
+            @ApiParam(name = "merchantOrderId", value = "商户订单id", required = true)
+            @RequestParam String merchantOrderId) {
+
+        // 修改订单状态为：已付款，待发货
+        orderService.updateOrderStatus(merchantOrderId, OrderStatusEnum.WAIT_DELIVER.type);
+
+        return HttpStatus.OK.value();
     }
 
 }
