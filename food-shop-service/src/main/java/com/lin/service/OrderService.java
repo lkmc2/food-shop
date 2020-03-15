@@ -12,7 +12,8 @@ public interface OrderService {
     /**
      * 用于创建订单相关信息
      * @param submitOrderBO 订单信息
+     * @return 订单 id
      */
-    void createOrder(SubmitOrderBO submitOrderBO);
+    String createOrder(SubmitOrderBO submitOrderBO);
 
 }

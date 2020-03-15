@@ -48,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @Override
-    public void createOrder(SubmitOrderBO submitOrderBO) {
+    public String createOrder(SubmitOrderBO submitOrderBO) {
         // 包邮费用设置为0
         int postAmount = 0;
 
@@ -94,6 +94,8 @@ public class OrderServiceImpl implements OrderService {
 
         // 3.保存订单状态表，设置状态为待付款
         saveOrderStatus(orderId);
+
+        return orderId;
     }
 
     /**

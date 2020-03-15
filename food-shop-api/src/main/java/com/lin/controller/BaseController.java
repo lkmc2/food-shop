@@ -7,6 +7,9 @@ package com.lin.controller;
  */
 public class BaseController {
 
+    /** 购物车在 cookie 中的名称 **/
+    protected static final String FOOD_SHOP_SHOP_CART = "shopcart";
+
     /** 每页显示条数 **/
     protected static final int PAGE_SIZE = 20;
 
