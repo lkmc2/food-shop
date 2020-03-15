@@ -1,6 +1,7 @@
 package com.lin.service;
 
 import com.lin.bo.SubmitOrderBO;
+import com.lin.pojo.OrderStatus;
 import com.lin.vo.OrderVO;
 
 /**
@@ -23,5 +24,12 @@ public interface OrderService {
      * @param orderStatus 订单状态
      */
     void updateOrderStatus(String orderId, Integer orderStatus);
+
+    /**
+     * 查询订单状态
+     * @param orderId 订单 id
+     * @return 订单状态
+     */
+    OrderStatus queryOrderStatusInfo(String orderId);
 
 }

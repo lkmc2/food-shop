@@ -1,9 +1,11 @@
 package com.lin.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.google.common.base.Preconditions;
 import com.lin.bo.SubmitOrderBO;
 import com.lin.enums.OrderStatusEnum;
 import com.lin.enums.PayMethodEnum;
+import com.lin.pojo.OrderStatus;
 import com.lin.service.OrderService;
 import com.lin.utils.CookieUtils;
 import com.lin.utils.JsonResult;
@@ -98,6 +100,21 @@ public class OrdersController extends BaseController {
         orderService.updateOrderStatus(merchantOrderId, OrderStatusEnum.WAIT_DELIVER.type);
 
         return HttpStatus.OK.value();
+    }
+
+    @ApiOperation(value = "获取订单支付信息", notes = "获取订单支付信息")
+    @PostMapping("/getPaidOrderInfo")
+    public JsonResult getPaidOrderInfo(
+            @ApiParam(name = "orderId", value = "订单id", required = true)
+            @RequestParam String orderId) {
+
+        if (StrUtil.isBlank(orderId)) {
+            return JsonResult.errorMsg("");
+        }
+
+        OrderStatus orderStatus = orderService.queryOrderStatusInfo(orderId);
+
+        return JsonResult.ok(orderStatus);
     }
 
 }
