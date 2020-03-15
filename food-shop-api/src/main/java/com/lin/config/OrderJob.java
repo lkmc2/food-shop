@@ -2,6 +2,8 @@ package com.lin.config;
 
 import cn.hutool.core.date.DateUtil;
 import com.lin.service.OrderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class OrderJob {
+
+    private static final Logger logger = LoggerFactory.getLogger(OrderJob.class);
 
     @Autowired
     private OrderService orderService;
@@ -40,7 +44,7 @@ public class OrderJob {
      */
     @Scheduled(cron = "0 0 0 * * ? *")
     public void autoCloseOrder() {
-        System.out.println("执行定时任务，当前时间为：" + DateUtil.now());
+        logger.info("执行定时任务，当前时间为：" + DateUtil.now());
         orderService.closeOrder();
     }
 
