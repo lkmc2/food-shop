@@ -59,7 +59,7 @@ public class JsonResult {
         return new JsonResult(502, msg, null);
     }
 
-    public static JsonResult errorExcepiton(String msg) {
+    public static JsonResult errorException(String msg) {
         return new JsonResult(555, msg, null);
     }
 
