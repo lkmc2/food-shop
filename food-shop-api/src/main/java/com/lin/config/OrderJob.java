@@ -40,9 +40,9 @@ public class OrderJob {
      */
 
     /**
-     * 自动关闭订单（每天 0 点）
+     * 自动关闭订单（每天中午 12 点）
      */
-    @Scheduled(cron = "0 0 0 * * ? *")
+    @Scheduled(cron = "0 0 12 * * ?")
     public void autoCloseOrder() {
         logger.info("执行定时任务，当前时间为：" + DateUtil.now());
         orderService.closeOrder();
