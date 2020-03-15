@@ -6,6 +6,8 @@ import com.lin.enums.PayMethodEnum;
 import com.lin.service.OrderService;
 import com.lin.utils.CookieUtils;
 import com.lin.utils.JsonResult;
+import com.lin.vo.MerchantOrdersVO;
+import com.lin.vo.OrderVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -45,7 +47,15 @@ public class OrdersController extends BaseController {
         System.out.println(submitOrderBO);
 
         // 1.创建订单
-        String orderId = orderService.createOrder(submitOrderBO);
+        OrderVO orderVO = orderService.createOrder(submitOrderBO);
+
+        // 订单 id
+        String orderId = orderVO.getOrderId();
+
+        // 商户订单 VO
+        MerchantOrdersVO merchantOrdersVO = orderVO.getMerchantOrdersVO();
+        // 设置通知商户支付成功的 url
+        merchantOrdersVO.setReturnUrl(PAY_RETURN_URL);
 
         // 2.创建订单以后，移除购物车中已结算（已提交）的商品
         // todo：整合 redis 之后，完善购物车中的已结算商品清除，并且同步到前端的 cookie

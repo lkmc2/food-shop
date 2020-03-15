@@ -11,6 +11,8 @@ import com.lin.pojo.*;
 import com.lin.service.AddressService;
 import com.lin.service.ItemService;
 import com.lin.service.OrderService;
+import com.lin.vo.MerchantOrdersVO;
+import com.lin.vo.OrderVO;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @Override
-    public String createOrder(SubmitOrderBO submitOrderBO) {
+    public OrderVO createOrder(SubmitOrderBO submitOrderBO) {
         // 包邮费用设置为0
         int postAmount = 0;
 
@@ -95,7 +97,20 @@ public class OrderServiceImpl implements OrderService {
         // 3.保存订单状态表，设置状态为待付款
         saveOrderStatus(orderId);
 
-        return orderId;
+        // 4.构建商户订单，用于传给支付中心
+        MerchantOrdersVO merchantOrdersVO = new MerchantOrdersVO();
+        merchantOrdersVO.setMerchantOrderId(orderId);
+        merchantOrdersVO.setMerchantUserId(submitOrderBO.getUserId());
+        // 价格（优惠后的价格 + 邮费）
+        merchantOrdersVO.setAmount(realPayAmount + postAmount);
+        merchantOrdersVO.setPayMethod(submitOrderBO.getPayMethod());
+
+        // 5.构建自定义订单 VO
+        OrderVO orderVO = new OrderVO();
+        orderVO.setOrderId(orderId);
+        orderVO.setMerchantOrdersVO(merchantOrdersVO);
+
+        return orderVO;
     }
 
     /**
