@@ -143,6 +143,13 @@
             <artifactId>lombok</artifactId>
         </dependency>
 
+        <!-- FastJson 序列化 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.61</version>
+        </dependency>
+
         <!--&lt;!&ndash; 引入 log4j 日志依赖 抽象层 和实现层 &ndash;&gt;-->
         <!--<dependency>-->
             <!--<groupId>org.slf4j</groupId>-->
