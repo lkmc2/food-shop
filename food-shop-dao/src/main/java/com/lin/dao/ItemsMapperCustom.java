@@ -43,9 +43,18 @@ public interface ItemsMapperCustom {
 
     /**
      * 根据规格 id 查询购物车列表
+     *
      * @param specIdsList 规格 id 列表
      * @return 购物车列表
      */
     List<ShopCartVO> queryItemsBySpecIds(@Param("paramsList") List<String> specIdsList);
+
+    /**
+     * 根据规格 id 减少库存
+     * @param specId 规格 id
+     * @param buyCounts 购买数量
+     * @return 受影响行数
+     */
+    int decreaseItemSpecStock(@Param("specId") String specId, @Param("buyCounts") int buyCounts);
 
 }

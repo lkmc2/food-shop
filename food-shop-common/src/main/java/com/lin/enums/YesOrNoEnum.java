@@ -6,9 +6,8 @@ package com.lin.enums;
  * @date 2020/3/9 21:13
  */
 public enum YesOrNoEnum {
-    /** 否 **/
+    /** 是否枚举 **/
     NO(0, "否"),
-    /** 是 **/
     YES(1, "是");
 
     public final Integer type;

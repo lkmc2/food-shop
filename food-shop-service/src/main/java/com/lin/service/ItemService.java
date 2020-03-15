@@ -102,4 +102,12 @@ public interface ItemService {
      * @return 规格具体信息
      */
     String queryItemMainImgById(String itemId);
+
+    /**
+     * 根据商品规格 id 减少商品库存
+     * @param specId 商品规格 id
+     * @param buyCounts 购买数量
+     */
+    void decreaseItemSpecStock(String specId, int buyCounts);
+
 }

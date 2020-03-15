@@ -6,11 +6,9 @@ package com.lin.enums;
  * @date 2020/3/9 21:41
  */
 public enum CategoryTypeEnum {
-    /** 一级分类 **/
+    /** 分类类型枚举 **/
     ROOT(1, "一级分类"),
-    /** 二级分类 **/
     SECOND(2, "二级分类"),
-    /** 三级分类 **/
     THIRD(3, "三级分类");
 
     public final Integer type;

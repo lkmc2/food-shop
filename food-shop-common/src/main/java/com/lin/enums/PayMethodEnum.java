@@ -6,9 +6,8 @@ package com.lin.enums;
  * @date 2020/3/14 20:37
  */
 public enum PayMethodEnum {
-    /** 微信 **/
+    /** 支付方式枚举 **/
     WEIXIN(1, "微信"),
-    /** 支付宝 **/
     ALIPAY(2, "支付宝");
 
     public final Integer type;
