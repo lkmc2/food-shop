@@ -9,7 +9,8 @@
     <result column="real_pay_amount" property="realPayAmount"/>
     <result column="post_amount" property="postAmount"/>
 
-    <collection property="subOrderItemList" ofType="com.lin.vo.MySubOrderItemVO">
+    <!-- 子查询，将会传入父查询的 orderId 作为子查询的入参 -->
+    <collection property="subOrderItemList" select="getSubItems" column="orderId" ofType="com.lin.vo.MySubOrderItemVO">
       <id column="item_id" property="itemId"/>
       <result column="item_name" property="itemName"/>
       <result column="item_img" property="itemImg"/>
@@ -21,6 +22,37 @@
   </resultMap>
 
   <select id="queryMyOrders" resultMap="myOrdersVO">
+      select
+          od.id as orderId,
+          od.create_time,
+          od.pay_method,
+          od.real_pay_amount,
+          od.post_amount,
+          status.order_status
+      from orders od
+      left join order_status status on od.id = status.order_id
+      where od.user_id = #{userId, jdbcType=VARCHAR}
+      <if test="orderStatus != null">
+        and od.is_delete = #{orderStatus, jdbcType=INTEGER}
+      </if>
+      order by od.update_time
+  </select>
+
+  <select id="getSubItems" parameterType="string" resultType="com.lin.vo.MySubOrderItemVO">
+    select
+      item.item_id,
+      item.item_name,
+      item.item_img,
+      item.item_spec_id,
+      item.item_spec_name,
+      item.buy_counts,
+      item.price
+    from order_items item
+    where item.order_id = #{orderId, jdbcType=VARCHAR}
+  </select>
+
+  <!-- 错误的使用例子，因为嵌套查询，会导致查询结果折叠，分页不正确 -->
+  <select id="queryMyOrdersDotNotUse" resultMap="myOrdersVO">
     select
         od.id as orderId,
         od.create_time,
