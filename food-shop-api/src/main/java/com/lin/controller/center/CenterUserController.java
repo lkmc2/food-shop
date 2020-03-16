@@ -7,6 +7,7 @@ import com.google.common.collect.Maps;
 import com.lin.bo.center.CenterUserBO;
 import com.lin.controller.BaseController;
 import com.lin.pojo.Users;
+import com.lin.resource.FileUpload;
 import com.lin.service.center.CenterUserService;
 import com.lin.utils.CookieUtils;
 import com.lin.utils.JsonResult;
@@ -43,6 +44,9 @@ public class CenterUserController extends BaseController {
     @Autowired
     private CenterUserService centerUserService;
 
+    @Autowired
+    private FileUpload fileUpload;
+
     @ApiOperation(value = "用户头像修改", notes = "用户头像修改")
     @PostMapping("/uploadFace")
     public JsonResult uploadFace(
@@ -67,7 +71,7 @@ public class CenterUserController extends BaseController {
                 String newFileName = StrUtil.format("face-{}.{}", userId, suffix);
 
                 // 上传的头像最终保存位置
-                String finalFacePath = IMAGE_USER_FACE_LOCATION + uploadPathPrefix + File.separator + newFileName;
+                String finalFacePath = fileUpload.getImageUserFaceLocation() + uploadPathPrefix + File.separator + newFileName;
 
                 File outFile = new File(finalFacePath);
 
