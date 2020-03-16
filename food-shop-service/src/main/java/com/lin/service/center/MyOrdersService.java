@@ -19,4 +19,10 @@ public interface MyOrdersService {
      */
     PagedGridResult queryMyOrders(String userId, Integer orderStatus, Integer page, Integer pageSize);
 
+    /**
+     * 将等待发货的订单的订单状态变更为商家发货
+     * @param orderId 订单 id
+     */
+    void updateDeliverOrderStatus(String orderId);
+
 }

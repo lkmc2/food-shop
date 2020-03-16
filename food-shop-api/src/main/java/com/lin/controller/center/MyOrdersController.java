@@ -9,10 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 我的订单 Controller（用户中心使用）
@@ -55,6 +52,22 @@ public class MyOrdersController extends BaseController {
         PagedGridResult grid = myOrdersService.queryMyOrders(userId, orderStatus, page, pageSize);
 
         return JsonResult.ok(grid);
+    }
+
+    @ApiOperation(value = "商家发货", notes = "商家发货")
+    @GetMapping("/deliver")
+    public JsonResult comments(
+            @ApiParam(name = "orderId", value = "订单id", required = true)
+            @RequestParam String orderId) {
+
+        if (StrUtil.isBlank(orderId)) {
+            return JsonResult.errorMsg("订单ID不能为空");
+        }
+
+        // 将等待发货的订单的订单状态变更为商家发货
+        myOrdersService.updateDeliverOrderStatus(orderId);
+
+        return JsonResult.ok();
     }
 
 }
