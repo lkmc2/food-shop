@@ -1,5 +1,6 @@
 package com.lin.controller.center;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.StrUtil;
@@ -53,7 +54,12 @@ public class CenterUserController extends BaseController {
             @ApiParam(name = "userId", value = "用户id", required = true)
             @RequestParam String userId,
             @ApiParam(name = "file", value = "用户头像", required = true)
-            MultipartFile file) {
+            MultipartFile file,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+
+        // 文件上传路径
+        String basePath = fileUpload.getImageUserFaceLocation();
 
         // 在路径上为每一个用户添加一个 userId ，用于区分不同用户上传
         String uploadPathPrefix = File.separator + userId;
@@ -71,7 +77,10 @@ public class CenterUserController extends BaseController {
                 String newFileName = StrUtil.format("face-{}.{}", userId, suffix);
 
                 // 上传的头像最终保存位置
-                String finalFacePath = fileUpload.getImageUserFaceLocation() + uploadPathPrefix + File.separator + newFileName;
+                String finalFacePath = basePath + uploadPathPrefix + File.separator + newFileName;
+
+                // 用于提供给 web 服务访问的地址
+                uploadPathPrefix += ("/" + newFileName);
 
                 File outFile = new File(finalFacePath);
 
@@ -93,7 +102,25 @@ public class CenterUserController extends BaseController {
             return JsonResult.errorMsg("文件不能为空！");
         }
 
-        return JsonResult.ok();
+        // 获取图片服务地址
+        String imageServerUrl = fileUpload.getImageServerUrl();
+
+        // 由于浏览器可能存在缓存的情况，所以需要加上时间戳保存更新后的图片可以及时刷新
+        // 最终头像地址
+        String finalUserFaceUrl = imageServerUrl + uploadPathPrefix + "?=" + DateUtil.format(DateUtil.date(), "yyyyMMddHHmmss");
+
+        // 更新用户头像到数据库
+        Users userResult = centerUserService.updateUserFace(userId, finalUserFaceUrl);
+
+        // 设置用户信息的敏感字段为空
+        setNullProperty(userResult);
+
+        // 设置 cookie
+        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(userResult), true);
+
+        // todo：后续将增加令牌 token ，会整合进 redis ，分布式会话
+
+        return JsonResult.ok(userResult);
     }
 
     @ApiOperation(value = "修改用户信息", notes = "修改用户信息")

@@ -19,4 +19,7 @@ public class FileUpload {
     /** 用户上传头像的地址 **/
     private String imageUserFaceLocation;
 
+    /** 图片服务地址 **/
+    private String imageServerUrl;
+
 }
