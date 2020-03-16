@@ -1,5 +1,8 @@
 package com.lin.controller.center;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.util.StrUtil;
 import com.google.common.collect.Maps;
 import com.lin.bo.center.CenterUserBO;
 import com.lin.controller.BaseController;
@@ -15,10 +18,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +42,55 @@ public class CenterUserController extends BaseController {
 
     @Autowired
     private CenterUserService centerUserService;
+
+    @ApiOperation(value = "用户头像修改", notes = "用户头像修改")
+    @PostMapping("/uploadFace")
+    public JsonResult uploadFace(
+            @ApiParam(name = "userId", value = "用户id", required = true)
+            @RequestParam String userId,
+            @ApiParam(name = "file", value = "用户头像", required = true)
+            MultipartFile file) {
+
+        // 在路径上为每一个用户添加一个 userId ，用于区分不同用户上传
+        String uploadPathPrefix = File.separator + userId;
+
+        // 开始文件上传
+        if (file != null) {
+            // 获取文件上传的文件名称
+            String fileName = file.getOriginalFilename();
+
+            if (StrUtil.isNotBlank(fileName)) {
+                // 文件后缀名
+                String suffix = FileUtil.extName(fileName);
+
+                // 文件重命名：face-{userId}.png
+                String newFileName = StrUtil.format("face-{}.{}", userId, suffix);
+
+                // 上传的头像最终保存位置
+                String finalFacePath = IMAGE_USER_FACE_LOCATION + uploadPathPrefix + File.separator + newFileName;
+
+                File outFile = new File(finalFacePath);
+
+                // 文件不存在时，则创建
+                if (!FileUtil.exist(outFile)) {
+                    FileUtil.touch(outFile);
+                }
+
+                // 文件输出保存到目标路径
+                try (FileOutputStream outputStream = new FileOutputStream(outFile)) {
+                    InputStream inputStream = file.getInputStream();
+
+                    IoUtil.copy(inputStream, outputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            return JsonResult.errorMsg("文件不能为空！");
+        }
+
+        return JsonResult.ok();
+    }
 
     @ApiOperation(value = "修改用户信息", notes = "修改用户信息")
     @PostMapping("/update")
