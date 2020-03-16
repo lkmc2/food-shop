@@ -13,8 +13,8 @@ public class BaseController {
     /** 每页显示条数 **/
     protected static final int PAGE_SIZE = 20;
 
-    /** 每页评论显示条数 **/
-    protected static final int COMMENT_PAGE_SIZE = 10;
+    /** 通用分页条数 **/
+    protected static final int COMMON_PAGE_SIZE = 10;
 
     /** 支付中心的调用地址 **/
     protected static final String PAYMENT_URL = "http://localhost:8088/payment/createMerchantOrder";
