@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.StrUtil;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.lin.bo.center.CenterUserBO;
 import com.lin.controller.BaseController;
@@ -72,6 +73,10 @@ public class CenterUserController extends BaseController {
             if (StrUtil.isNotBlank(fileName)) {
                 // 文件后缀名
                 String suffix = FileUtil.extName(fileName);
+
+                if (!Lists.newArrayList("png", "jpg", "jpeg").contains(suffix)) {
+                    return JsonResult.errorMsg("图片格式不正确！");
+                }
 
                 // 文件重命名：face-{userId}.png
                 String newFileName = StrUtil.format("face-{}.{}", userId, suffix);
