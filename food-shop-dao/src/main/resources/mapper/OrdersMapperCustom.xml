@@ -32,8 +32,9 @@
       from orders od
       left join order_status status on od.id = status.order_id
       where od.user_id = #{userId, jdbcType=VARCHAR}
+      and od.is_delete = 0
       <if test="orderStatus != null">
-        and od.is_delete = #{orderStatus, jdbcType=INTEGER}
+        and status.order_status = #{orderStatus, jdbcType=INTEGER}
       </if>
       order by od.update_time
   </select>
@@ -71,8 +72,9 @@
     left join order_status status on od.id = status.order_id
     left join order_items item on od.id = status.order_id
     where od.user_id = #{userId, jdbcType=VARCHAR}
+    and od.is_delete = 0
     <if test="orderStatus != null">
-      and od.is_delete = #{orderStatus, jdbcType=INTEGER}
+      and status.order_status = #{orderStatus, jdbcType=INTEGER}
     </if>
     order by od.update_time
   </select>
