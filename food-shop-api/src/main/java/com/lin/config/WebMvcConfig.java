@@ -31,7 +31,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 拦截所有静态资源
         registry.addResourceHandler("/**")
+                // 添加 swagger2 映射
+                .addResourceLocations("classpath:/META-INF/resources/")
+                // 添加本地硬盘映射
                 .addResourceLocations("file:E:/UploadWorkplace/FoodShowPicUpload/");
     }
 
