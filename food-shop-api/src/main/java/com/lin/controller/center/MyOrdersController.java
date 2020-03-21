@@ -2,14 +2,11 @@ package com.lin.controller.center;
 
 import cn.hutool.core.util.StrUtil;
 import com.lin.controller.BaseController;
-import com.lin.pojo.Orders;
-import com.lin.service.center.MyOrdersService;
 import com.lin.utils.JsonResult;
 import com.lin.utils.PagedGridResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,9 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("myorders")
 public class MyOrdersController extends BaseController {
-
-    @Autowired
-    private MyOrdersService myOrdersService;
 
     @ApiOperation(value = "查询订单列表", notes = "查询订单列表")
     @PostMapping("/query")
@@ -115,22 +109,6 @@ public class MyOrdersController extends BaseController {
 
         if (!isSuccess) {
             return JsonResult.errorMsg("订单删除失败");
-        }
-
-        return JsonResult.ok();
-    }
-
-    /**
-     * 用户验证用户和订单是否有关联关系，避免非法用户调用
-     * @param userId 用户 id
-     * @param orderId 订单 id
-     * @return 验证结果
-     */
-    private JsonResult checkUserOrder(String userId, String orderId) {
-        Orders order = myOrdersService.queryMyOrder(userId, orderId);
-
-        if (order == null) {
-            return JsonResult.errorMsg("订单不存在");
         }
 
         return JsonResult.ok();

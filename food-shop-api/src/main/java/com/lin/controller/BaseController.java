@@ -1,5 +1,10 @@
 package com.lin.controller;
 
+import com.lin.pojo.Orders;
+import com.lin.service.center.MyOrdersService;
+import com.lin.utils.JsonResult;
+import org.springframework.beans.factory.annotation.Autowired;
+
 /**
  * 公共逻辑 Controller
  * @author lkmc2
@@ -24,5 +29,24 @@ public class BaseController {
 
     /** 用户上传头像的地址 **/
     protected static final String IMAGE_USER_FACE_LOCATION = "E:\\UploadWorkplace\\FoodShowPicUpload\\faces";
+
+    @Autowired
+    protected MyOrdersService myOrdersService;
+
+    /**
+     * 用户验证用户和订单是否有关联关系，避免非法用户调用
+     * @param userId 用户 id
+     * @param orderId 订单 id
+     * @return 验证结果
+     */
+    protected JsonResult checkUserOrder(String userId, String orderId) {
+        Orders order = myOrdersService.queryMyOrder(userId, orderId);
+
+        if (order == null) {
+            return JsonResult.errorMsg("订单不存在");
+        }
+
+        return JsonResult.ok(order);
+    }
 
 }
