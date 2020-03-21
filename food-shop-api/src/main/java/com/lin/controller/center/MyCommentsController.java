@@ -1,5 +1,7 @@
 package com.lin.controller.center;
 
+import cn.hutool.core.collection.CollUtil;
+import com.lin.bo.center.OrderItemsCommentBO;
 import com.lin.controller.BaseController;
 import com.lin.enums.YesOrNoEnum;
 import com.lin.pojo.OrderItems;
@@ -11,10 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -57,6 +56,32 @@ public class MyCommentsController extends BaseController {
         List<OrderItems> list = myCommentsService.queryPendingComment(orderId);
 
         return JsonResult.ok(list);
+    }
+
+    @ApiOperation(value = "保存评论列表", notes = "保存评论列表")
+    @PostMapping("/saveList")
+    public JsonResult saveList(
+            @ApiParam(name = "userId", value = "用户id", required = true)
+            @RequestParam String userId,
+            @ApiParam(name = "orderId", value = "订单id", required = true)
+            @RequestParam String orderId,
+            @RequestBody List<OrderItemsCommentBO> commentList) {
+
+        // 用户验证用户和订单是否有关联关系，避免非法用户调用
+        JsonResult checkResult = checkUserOrder(userId, orderId);
+
+        if (checkResult.getStatus() != HttpStatus.OK.value()) {
+            return checkResult;
+        }
+
+        if (CollUtil.isEmpty(commentList)) {
+            return JsonResult.errorMsg("评论内容列表不能为空");
+        }
+
+        // 保存评论列表
+        myCommentsService.saveComments(orderId, userId, commentList);
+
+        return JsonResult.ok();
     }
 
 }

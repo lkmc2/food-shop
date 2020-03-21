@@ -50,6 +50,6 @@ public class OrderStatus {
 
     @Column(name = "comment_time")
     @ApiModelProperty(value = "留言时间 用户在交易成功后的留言时间")
-    private String commentTime;
+    private Date commentTime;
 
 }
