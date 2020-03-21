@@ -4,9 +4,12 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
 import com.lin.dao.OrderStatusMapper;
+import com.lin.dao.OrdersMapper;
 import com.lin.dao.OrdersMapperCustom;
 import com.lin.enums.OrderStatusEnum;
+import com.lin.enums.YesOrNoEnum;
 import com.lin.pojo.OrderStatus;
+import com.lin.pojo.Orders;
 import com.lin.service.center.MyOrdersService;
 import com.lin.utils.PagedGridResult;
 import com.lin.vo.MyOrderVO;
@@ -34,6 +37,9 @@ public class MyOrdersServiceImpl implements MyOrdersService {
 
     @Autowired
     private OrderStatusMapper orderStatusMapper;
+
+    @Autowired
+    private OrdersMapper ordersMapper;
 
     @Override
     public PagedGridResult queryMyOrders(String userId, Integer orderStatus, Integer page, Integer pageSize) {
@@ -85,6 +91,55 @@ public class MyOrdersServiceImpl implements MyOrdersService {
         criteria.andEqualTo("orderStatus", OrderStatusEnum.WAIT_DELIVER.type);
 
         orderStatusMapper.updateByExampleSelective(updateStatus, example);
+    }
+
+    @Override
+    public Orders queryMyOrder(String userId, String orderId) {
+        Orders order = new Orders();
+        order.setUserId(userId);
+        order.setId(orderId);
+        // 状态为未删除的订单
+        order.setIsDelete(YesOrNoEnum.NO.type);
+
+        return ordersMapper.selectOne(order);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Override
+    public boolean updateReceiveOrderStatus(String orderId) {
+        OrderStatus updateOrder = new OrderStatus();
+        updateOrder.setOrderStatus(OrderStatusEnum.SUCCESS.type);
+        updateOrder.setSuccessTime(new Date());
+
+        Example example = new Example(OrderStatus.class);
+        Example.Criteria criteria = example.createCriteria();
+        // where order_id = '订单号'
+        criteria.andEqualTo("orderId", orderId);
+        // where order_status = '待收货'
+        criteria.andEqualTo("orderStatus", OrderStatusEnum.WAIT_RECEIVE.type);
+
+        int effectCount = orderStatusMapper.updateByExampleSelective(updateOrder, example);
+
+        return effectCount == 1;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Override
+    public boolean deleteOrder(String userId, String orderId) {
+        Orders updateOrder = new Orders();
+        updateOrder.setIsDelete(YesOrNoEnum.YES.type);
+        updateOrder.setUpdateTime(new Date());
+
+        Example example = new Example(Orders.class);
+        Example.Criteria criteria = example.createCriteria();
+        // where id = '订单号'
+        criteria.andEqualTo("id", orderId);
+        // where user_id = '订单id'
+        criteria.andEqualTo("userId", userId);
+
+        int effectCount = ordersMapper.updateByExampleSelective(updateOrder, example);
+
+        return effectCount == 1;
     }
 
 }

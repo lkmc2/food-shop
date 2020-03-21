@@ -1,5 +1,6 @@
 package com.lin.service.center;
 
+import com.lin.pojo.Orders;
 import com.lin.utils.PagedGridResult;
 
 /**
@@ -24,5 +25,28 @@ public interface MyOrdersService {
      * @param orderId 订单 id
      */
     void updateDeliverOrderStatus(String orderId);
+
+    /**
+     * 查询我的订单
+     * @param userId 用户 id
+     * @param orderId 订单 id
+     * @return 订单信息
+     */
+    Orders queryMyOrder(String userId, String orderId);
+
+    /**
+     * 更新订单状态 -> 确认收货
+     * @param orderId 订单 id
+     * @return 是否更新成功
+     */
+    boolean updateReceiveOrderStatus(String orderId);
+
+    /**
+     * 删除订单（逻辑删除）
+     * @param userId 用户 id
+     * @param orderId 订单 id
+     * @return 是否删除成功
+     */
+    boolean deleteOrder(String userId, String orderId);
 
 }
