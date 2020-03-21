@@ -93,4 +93,22 @@
         </if>
     </select>
 
+    <select id="getMyOrderTrend" resultType="OrderStatus">
+        select
+            status.order_id,
+            status.order_status,
+            status.create_time,
+            status.pay_time,
+            status.deliver_time,
+            status.success_time,
+            status.close_time,
+            status.comment_time
+        from orders ord
+        left join order_status status on ord.id = status.order_id
+        where ord.is_delete = 0
+          and ord.user_id = #{userId, jdbcType=VARCHAR}
+          and status.order_status in (20, 30, 40)
+        order by status.order_id desc
+    </select>
+
 </mapper>

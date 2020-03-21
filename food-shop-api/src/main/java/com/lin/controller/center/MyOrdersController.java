@@ -130,4 +130,32 @@ public class MyOrdersController extends BaseController {
         return JsonResult.ok(countsVO);
     }
 
+    @ApiOperation(value = "获取订单动向列表", notes = "获取订单动向列表")
+    @PostMapping("/trend")
+    public JsonResult trend(
+            @ApiParam(name = "userId", value = "用户id", required = true)
+            @RequestParam String userId,
+            @ApiParam(name = "page", value = "查询的页数")
+            @RequestParam Integer page,
+            @ApiParam(name = "pageSize", value = "分页每一页显示的条数")
+            @RequestParam Integer pageSize) {
+
+        if (StrUtil.isBlank(userId)) {
+            return JsonResult.errorMsg(null);
+        }
+
+        if (page == null) {
+            page = 1;
+        }
+
+        if (pageSize == null) {
+            pageSize = COMMON_PAGE_SIZE;
+        }
+
+        // 分页查询订单动向列表
+        PagedGridResult grid = myOrdersService.getOrdersTrend(userId, page, pageSize);
+
+        return JsonResult.ok(grid);
+    }
+
 }

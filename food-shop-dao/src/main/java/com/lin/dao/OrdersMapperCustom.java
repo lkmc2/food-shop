@@ -1,5 +1,6 @@
 package com.lin.dao;
 
+import com.lin.pojo.OrderStatus;
 import com.lin.vo.MyOrderVO;
 
 import java.util.List;
@@ -23,9 +24,17 @@ public interface OrdersMapperCustom {
 
     /**
      * 根据订单状态获取用户订单数
+     *
      * @param paramMap 参数 Map
      * @return 订单数
      */
     int getMyOrderStatusCounts(Map<String, Object> paramMap);
+
+    /**
+     * 获取我的订单动向列表
+     * @param paramMap 参数 Map
+     * @return 订单动向列表
+     */
+    List<OrderStatus> getMyOrderTrend(Map<String, Object> paramMap);
 
 }

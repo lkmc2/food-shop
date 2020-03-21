@@ -51,9 +51,19 @@ public interface MyOrdersService {
     boolean deleteOrder(String userId, String orderId);
 
     /**
-     * 查询用户订单数
+     * 查询用户订单状态数概况
      * @param userId 用户 id
+     * @return 订单状态数概况
      */
     OrderStatusCountsVO getOrderStatusCounts(String userId);
+
+    /**
+     * 分页查询订单动向列表
+     * @param userId 用户 id
+     * @param page 当前页数
+     * @param pageSize 每页显示的条数
+     * @return 订单动向列表
+     */
+    PagedGridResult getOrdersTrend(String userId, Integer page, Integer pageSize);
 
 }

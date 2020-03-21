@@ -1,6 +1,7 @@
 package com.lin.service.impl.center;
 
 import com.github.pagehelper.PageHelper;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.lin.dao.OrderStatusMapper;
 import com.lin.dao.OrdersMapper;
@@ -156,6 +157,15 @@ public class MyOrdersServiceImpl extends BaseService implements MyOrdersService 
         countsVO.setWaitCommentCounts(waitCommentCounts);
 
         return countsVO;
+    }
+
+    @Override
+    public PagedGridResult getOrdersTrend(String userId, Integer page, Integer pageSize) {
+        PageHelper.startPage(page, pageSize);
+
+        List<OrderStatus> list = ordersMapperCustom.getMyOrderTrend(ImmutableMap.of("userId", userId));
+
+        return setterPagedGrid(list, page);
     }
 
 }
