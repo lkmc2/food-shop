@@ -1,7 +1,6 @@
 package com.lin.service.impl.center;
 
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
 import com.lin.dao.OrderStatusMapper;
 import com.lin.dao.OrdersMapper;
@@ -30,7 +29,7 @@ import java.util.Map;
  */
 @Service
 @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
-public class MyOrdersServiceImpl implements MyOrdersService {
+public class MyOrdersServiceImpl extends BaseService implements MyOrdersService {
 
     @Autowired
     private OrdersMapperCustom ordersMapperCustom;
@@ -54,25 +53,7 @@ public class MyOrdersServiceImpl implements MyOrdersService {
 
         List<MyOrderVO> list = ordersMapperCustom.queryMyOrders(paramMap);
 
-        return setPagedGrid(list, page);
-    }
-
-    /**
-     * 设置分页结果信息
-     * @param list 查询结果列列表
-     * @param page 当前页
-     * @return 分页结果信息
-     */
-    private PagedGridResult setPagedGrid(List<?> list, Integer page) {
-        PageInfo<?> pageList = new PageInfo<>(list);
-
-        PagedGridResult grid = new PagedGridResult();
-        grid.setPage(page);
-        grid.setRows(list);
-        grid.setTotal(pageList.getPages());
-        grid.setRecords(pageList.getTotal());
-
-        return grid;
+        return setterPagedGrid(list, page);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)

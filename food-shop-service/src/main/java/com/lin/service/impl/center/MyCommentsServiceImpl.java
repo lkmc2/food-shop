@@ -1,5 +1,7 @@
 package com.lin.service.impl.center;
 
+import com.github.pagehelper.PageHelper;
+import com.google.common.collect.ImmutableMap;
 import com.lin.bo.center.OrderItemsCommentBO;
 import com.lin.dao.ItemCommentsMapperCustom;
 import com.lin.dao.OrderItemsMapper;
@@ -10,6 +12,8 @@ import com.lin.pojo.OrderItems;
 import com.lin.pojo.OrderStatus;
 import com.lin.pojo.Orders;
 import com.lin.service.center.MyCommentsService;
+import com.lin.utils.PagedGridResult;
+import com.lin.vo.MyCommentVO;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +30,7 @@ import java.util.List;
  */
 @Service
 @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
-public class MyCommentsServiceImpl implements MyCommentsService {
+public class MyCommentsServiceImpl extends BaseService implements MyCommentsService {
 
     @Autowired
     private OrderItemsMapper orderItemsMapper;
@@ -75,6 +79,14 @@ public class MyCommentsServiceImpl implements MyCommentsService {
         orderStatus.setOrderId(orderId);
         orderStatus.setCommentTime(new Date());
         orderStatusMapper.updateByPrimaryKeySelective(orderStatus);
+    }
+
+    @Override
+    public PagedGridResult queryMyComments(String userId, Integer page, Integer pageSize) {
+        PageHelper.startPage(page, pageSize);
+
+        List<MyCommentVO> list = itemCommentsMapperCustom.queryMyComments(ImmutableMap.of("userId", userId));
+        return setterPagedGrid(list, page);
     }
 
 }

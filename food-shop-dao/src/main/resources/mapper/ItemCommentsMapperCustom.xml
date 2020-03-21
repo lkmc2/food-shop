@@ -21,4 +21,30 @@
     </foreach>
   </select>
 
+    <resultMap id="myComments" type="com.lin.vo.MyCommentVO">
+        <id column="commentId" property="commentId"/>
+        <result column="content" property="content"/>
+        <result column="create_time" property="createTime"/>
+        <result column="item_id" property="itemId"/>
+        <result column="item_name" property="itemName"/>
+        <result column="spec_name" property="specName"/>
+        <result column="itemImg" property="itemImg"/>
+    </resultMap>
+
+    <select id="queryMyComments" resultMap="myComments">
+        select
+            comments.id as commentId,
+            comments.content,
+            comments.create_time,
+            comments.item_id,
+            comments.item_name,
+            comments.spec_name,
+            img.url as itemImg
+        from items_comments comments
+        left join items_img img on comments.item_id = img.item_id
+        where comments.user_id = #{userId, jdbcType=VARCHAR}
+          and img.is_main = 1
+        order by comments.create_time desc
+    </select>
+
 </mapper>

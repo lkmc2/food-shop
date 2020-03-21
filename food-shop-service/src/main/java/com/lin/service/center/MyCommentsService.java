@@ -2,6 +2,7 @@ package com.lin.service.center;
 
 import com.lin.bo.center.OrderItemsCommentBO;
 import com.lin.pojo.OrderItems;
+import com.lin.utils.PagedGridResult;
 
 import java.util.List;
 
@@ -26,5 +27,14 @@ public interface MyCommentsService {
      * @param commentList 评论列表
      */
     void saveComments(String orderId, String userId, List<OrderItemsCommentBO> commentList);
+
+    /**
+     * 分页查询我的评论列表
+     * @param userId 用户 id
+     * @param page 当前页数
+     * @param pageSize 每页显示的条数
+     * @return 我的评论列表
+     */
+    PagedGridResult queryMyComments(String userId, Integer page, Integer pageSize);
 
 }

@@ -1,6 +1,7 @@
 package com.lin.controller.center;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.lin.bo.center.OrderItemsCommentBO;
 import com.lin.controller.BaseController;
 import com.lin.enums.YesOrNoEnum;
@@ -8,6 +9,7 @@ import com.lin.pojo.OrderItems;
 import com.lin.pojo.Orders;
 import com.lin.service.center.MyCommentsService;
 import com.lin.utils.JsonResult;
+import com.lin.utils.PagedGridResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -82,6 +84,34 @@ public class MyCommentsController extends BaseController {
         myCommentsService.saveComments(orderId, userId, commentList);
 
         return JsonResult.ok();
+    }
+
+    @ApiOperation(value = "查询我的评论列表", notes = "查询我的评论列表")
+    @PostMapping("/query")
+    public JsonResult query(
+            @ApiParam(name = "userId", value = "用户id", required = true)
+            @RequestParam String userId,
+            @ApiParam(name = "page", value = "查询的页数")
+            @RequestParam Integer page,
+            @ApiParam(name = "pageSize", value = "分页每一页显示的条数")
+            @RequestParam Integer pageSize) {
+
+        if (StrUtil.isBlank(userId)) {
+            return JsonResult.errorMsg(null);
+        }
+
+        if (page == null) {
+            page = 1;
+        }
+
+        if (pageSize == null) {
+            pageSize = COMMON_PAGE_SIZE;
+        }
+
+        // 分页查询评论列表
+        PagedGridResult grid = myCommentsService.queryMyComments(userId, page, pageSize);
+
+        return JsonResult.ok(grid);
     }
 
 }
