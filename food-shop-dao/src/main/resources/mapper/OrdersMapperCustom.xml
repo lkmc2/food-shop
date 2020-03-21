@@ -8,6 +8,8 @@
     <result column="pay_method" property="payMethod"/>
     <result column="real_pay_amount" property="realPayAmount"/>
     <result column="post_amount" property="postAmount"/>
+    <result column="order_status" property="orderStatus"/>
+    <result column="is_comment" property="isComment"/>
 
     <!-- 子查询，将会传入父查询的 orderId 作为子查询的入参 -->
     <collection property="subOrderItemList" select="getSubItems" column="orderId" ofType="com.lin.vo.MySubOrderItemVO">
@@ -28,7 +30,8 @@
           od.pay_method,
           od.real_pay_amount,
           od.post_amount,
-          status.order_status
+          status.order_status,
+          od.is_comment
       from orders od
       left join order_status status on od.id = status.order_id
       where od.user_id = #{userId, jdbcType=VARCHAR}
