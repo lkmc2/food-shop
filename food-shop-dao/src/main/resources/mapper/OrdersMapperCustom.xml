@@ -1,63 +1,63 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.lin.dao.OrdersMapperCustom" >
+<mapper namespace="com.lin.dao.OrdersMapperCustom">
 
-  <resultMap id="myOrdersVO" type="com.lin.vo.MyOrderVO">
-    <id column="orderId" property="orderId"/>
-    <result column="create_time" property="createTime"/>
-    <result column="pay_method" property="payMethod"/>
-    <result column="real_pay_amount" property="realPayAmount"/>
-    <result column="post_amount" property="postAmount"/>
-    <result column="order_status" property="orderStatus"/>
-    <result column="is_comment" property="isComment"/>
+    <resultMap id="myOrdersVO" type="com.lin.vo.MyOrderVO">
+        <id column="orderId" property="orderId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="pay_method" property="payMethod"/>
+        <result column="real_pay_amount" property="realPayAmount"/>
+        <result column="post_amount" property="postAmount"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="is_comment" property="isComment"/>
 
-    <!-- 子查询，将会传入父查询的 orderId 作为子查询的入参 -->
-    <collection property="subOrderItemList" select="getSubItems" column="orderId" ofType="com.lin.vo.MySubOrderItemVO">
-      <id column="item_id" property="itemId"/>
-      <result column="item_name" property="itemName"/>
-      <result column="item_img" property="itemImg"/>
-      <result column="item_spec_id" property="itemSpecId"/>
-      <result column="item_spec_name" property="itemSpecName"/>
-      <result column="buy_counts" property="buyCounts"/>
-      <result column="price" property="price"/>
-    </collection>
-  </resultMap>
+        <!-- 子查询，将会传入父查询的 orderId 作为子查询的入参 -->
+        <collection property="subOrderItemList" select="getSubItems" column="orderId" ofType="com.lin.vo.MySubOrderItemVO">
+            <id column="item_id" property="itemId"/>
+            <result column="item_name" property="itemName"/>
+            <result column="item_img" property="itemImg"/>
+            <result column="item_spec_id" property="itemSpecId"/>
+            <result column="item_spec_name" property="itemSpecName"/>
+            <result column="buy_counts" property="buyCounts"/>
+            <result column="price" property="price"/>
+        </collection>
+    </resultMap>
 
-  <select id="queryMyOrders" resultMap="myOrdersVO">
-      select
-          od.id as orderId,
-          od.create_time,
-          od.pay_method,
-          od.real_pay_amount,
-          od.post_amount,
-          status.order_status,
-          od.is_comment
-      from orders od
-      left join order_status status on od.id = status.order_id
-      where od.user_id = #{userId, jdbcType=VARCHAR}
-      and od.is_delete = 0
-      <if test="orderStatus != null">
-        and status.order_status = #{orderStatus, jdbcType=INTEGER}
-      </if>
-      order by od.update_time
-  </select>
+    <select id="queryMyOrders" resultMap="myOrdersVO">
+        select
+        od.id as orderId,
+        od.create_time,
+        od.pay_method,
+        od.real_pay_amount,
+        od.post_amount,
+        status.order_status,
+        od.is_comment
+        from orders od
+        left join order_status status on od.id = status.order_id
+        where od.user_id = #{userId, jdbcType=VARCHAR}
+        and od.is_delete = 0
+        <if test="orderStatus != null">
+            and status.order_status = #{orderStatus, jdbcType=INTEGER}
+        </if>
+        order by od.update_time
+    </select>
 
-  <select id="getSubItems" parameterType="string" resultType="com.lin.vo.MySubOrderItemVO">
-    select
-      item.item_id,
-      item.item_name,
-      item.item_img,
-      item.item_spec_id,
-      item.item_spec_name,
-      item.buy_counts,
-      item.price
-    from order_items item
-    where item.order_id = #{orderId, jdbcType=VARCHAR}
-  </select>
+    <select id="getSubItems" parameterType="string" resultType="com.lin.vo.MySubOrderItemVO">
+        select
+        item.item_id,
+        item.item_name,
+        item.item_img,
+        item.item_spec_id,
+        item.item_spec_name,
+        item.buy_counts,
+        item.price
+        from order_items item
+        where item.order_id = #{orderId, jdbcType=VARCHAR}
+    </select>
 
-  <!-- 错误的使用例子，因为嵌套查询，会导致查询结果折叠，分页不正确 -->
-  <select id="queryMyOrdersDotNotUse" resultMap="myOrdersVO">
-    select
+    <!-- 错误的使用例子，因为嵌套查询，会导致查询结果折叠，分页不正确 -->
+    <select id="queryMyOrdersDotNotUse" resultMap="myOrdersVO">
+        select
         od.id as orderId,
         od.create_time,
         od.pay_method,
@@ -71,15 +71,26 @@
         item.item_spec_name,
         item.buy_counts,
         item.price
-    from orders od
-    left join order_status status on od.id = status.order_id
-    left join order_items item on od.id = status.order_id
-    where od.user_id = #{userId, jdbcType=VARCHAR}
-    and od.is_delete = 0
-    <if test="orderStatus != null">
-      and status.order_status = #{orderStatus, jdbcType=INTEGER}
-    </if>
-    order by od.update_time
-  </select>
+        from orders od
+        left join order_status status on od.id = status.order_id
+        left join order_items item on od.id = status.order_id
+        where od.user_id = #{userId, jdbcType=VARCHAR}
+        and od.is_delete = 0
+        <if test="orderStatus != null">
+            and status.order_status = #{orderStatus, jdbcType=INTEGER}
+        </if>
+        order by od.update_time
+    </select>
+
+    <select id="getMyOrderStatusCounts" resultType="int">
+        select count(1)
+        from orders ord
+        left join order_status status on ord.id = status.order_id
+        where ord.user_id = #{userId, jdbcType=VARCHAR}
+          and status.order_status = #{orderStatus, jdbcType=INTEGER}
+        <if test="isComment != null">
+          and ord.is_comment = #{isComment, jdbcType=INTEGER}
+        </if>
+    </select>
 
 </mapper>

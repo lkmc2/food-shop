@@ -12,6 +12,7 @@ import com.lin.pojo.Orders;
 import com.lin.service.center.MyOrdersService;
 import com.lin.utils.PagedGridResult;
 import com.lin.vo.MyOrderVO;
+import com.lin.vo.OrderStatusCountsVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -121,6 +122,40 @@ public class MyOrdersServiceImpl extends BaseService implements MyOrdersService 
         int effectCount = ordersMapper.updateByExampleSelective(updateOrder, example);
 
         return effectCount == 1;
+    }
+
+    @Override
+    public OrderStatusCountsVO getOrderStatusCounts(String userId) {
+        Map<String, Object> paramMap = Maps.newHashMap();
+        paramMap.put("userId", userId);
+        paramMap.put("orderStatus", OrderStatusEnum.WAIT_PAY.type);
+
+        // 等待支付的订单数
+        int waitPayCounts = ordersMapperCustom.getMyOrderStatusCounts(paramMap);
+
+        paramMap.put("orderStatus", OrderStatusEnum.WAIT_DELIVER.type);
+
+        // 等待发货的订单数
+        int waitDeliverCounts = ordersMapperCustom.getMyOrderStatusCounts(paramMap);
+
+        paramMap.put("orderStatus", OrderStatusEnum.WAIT_RECEIVE.type);
+
+        // 等待收货的订单数
+        int waitReceiveCounts = ordersMapperCustom.getMyOrderStatusCounts(paramMap);
+
+        paramMap.put("orderStatus", OrderStatusEnum.WAIT_DELIVER.type);
+        paramMap.put("isComment", YesOrNoEnum.NO.type);
+
+        // 等待评论的订单数
+        int waitCommentCounts = ordersMapperCustom.getMyOrderStatusCounts(paramMap);
+
+        OrderStatusCountsVO countsVO = new OrderStatusCountsVO();
+        countsVO.setWaitPayCounts(waitPayCounts);
+        countsVO.setWaitDeliverCounts(waitDeliverCounts);
+        countsVO.setWaitReceiveCounts(waitReceiveCounts);
+        countsVO.setWaitCommentCounts(waitCommentCounts);
+
+        return countsVO;
     }
 
 }

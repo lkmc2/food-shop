@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.lin.controller.BaseController;
 import com.lin.utils.JsonResult;
 import com.lin.utils.PagedGridResult;
+import com.lin.vo.OrderStatusCountsVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -112,6 +113,21 @@ public class MyOrdersController extends BaseController {
         }
 
         return JsonResult.ok();
+    }
+
+    @ApiOperation(value = "获取订单状态数概况", notes = "获取订单状态数概况")
+    @PostMapping("/statusCounts")
+    public JsonResult statusCounts(
+            @ApiParam(name = "userId", value = "用户id", required = true)
+            @RequestParam String userId) {
+
+        if (StrUtil.isBlank(userId)) {
+            return JsonResult.errorMsg(null);
+        }
+
+        OrderStatusCountsVO countsVO = myOrdersService.getOrderStatusCounts(userId);
+
+        return JsonResult.ok(countsVO);
     }
 
 }

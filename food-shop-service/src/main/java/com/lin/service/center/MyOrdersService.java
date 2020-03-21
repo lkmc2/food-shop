@@ -2,6 +2,7 @@ package com.lin.service.center;
 
 import com.lin.pojo.Orders;
 import com.lin.utils.PagedGridResult;
+import com.lin.vo.OrderStatusCountsVO;
 
 /**
  * 我的订单服务（用户中心使用）
@@ -48,5 +49,11 @@ public interface MyOrdersService {
      * @return 是否删除成功
      */
     boolean deleteOrder(String userId, String orderId);
+
+    /**
+     * 查询用户订单数
+     * @param userId 用户 id
+     */
+    OrderStatusCountsVO getOrderStatusCounts(String userId);
 
 }
