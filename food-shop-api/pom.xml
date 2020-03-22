@@ -11,8 +11,8 @@
 
     <artifactId>food-shop-api</artifactId>
     <!-- 子模块的默认打包方式为 jar -->
-    <!--<packaging>jar</packaging>-->
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
+    <!--<packaging>war</packaging>-->
     <description>api接口模块</description>
 
     <dependencies>
@@ -30,6 +30,11 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -51,19 +56,6 @@
                 </configuration>
             </plugin>
         </plugins>
-
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-            <resource>
-                <directory>src/main/java</directory>
-                <includes>
-                    <include>**/*.xml</include>
-                </includes>
-            </resource>
-        </resources>
     </build>
 
 </project>
