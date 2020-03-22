@@ -11,7 +11,8 @@
 
     <artifactId>food-shop-api</artifactId>
     <!-- 子模块的默认打包方式为 jar -->
-    <packaging>jar</packaging>
+    <!--<packaging>jar</packaging>-->
+    <packaging>war</packaging>
     <description>api接口模块</description>
 
     <dependencies>
