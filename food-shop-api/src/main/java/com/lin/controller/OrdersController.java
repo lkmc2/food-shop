@@ -2,6 +2,7 @@ package com.lin.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.google.common.base.Preconditions;
+import com.lin.bo.ShopCartBO;
 import com.lin.bo.SubmitOrderBO;
 import com.lin.enums.OrderStatusEnum;
 import com.lin.enums.PayMethodEnum;
@@ -9,6 +10,8 @@ import com.lin.pojo.OrderStatus;
 import com.lin.service.OrderService;
 import com.lin.utils.CookieUtils;
 import com.lin.utils.JsonResult;
+import com.lin.utils.JsonUtils;
+import com.lin.utils.RedisOperator;
 import com.lin.vo.MerchantOrdersVO;
 import com.lin.vo.OrderVO;
 import io.swagger.annotations.Api;
@@ -21,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 订单 Controller
@@ -38,6 +42,9 @@ public class OrdersController extends BaseController {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private RedisOperator redisOperator;
+
     @ApiOperation(value = "用户下单", notes = "用户下单")
     @PostMapping("/create")
     public JsonResult create(@RequestBody SubmitOrderBO submitOrderBO,
@@ -53,8 +60,18 @@ public class OrdersController extends BaseController {
 
 //        System.out.println(submitOrderBO);
 
+        // redis 缓存的购物车列表
+        String shopCartJson = redisOperator.get(FOOD_SHOP_SHOP_CART + ":" + submitOrderBO.getUserId());
+
+        if (StrUtil.isNotBlank(shopCartJson)) {
+            return JsonResult.errorMsg("购物车数据不正确");
+        }
+
+        // 购物车列表
+        List<ShopCartBO> shopCartList = JsonUtils.jsonToList(shopCartJson, ShopCartBO.class);
+
         // 1.创建订单
-        OrderVO orderVO = orderService.createOrder(submitOrderBO);
+        OrderVO orderVO = orderService.createOrder(shopCartList, submitOrderBO);
 
         // 订单 id
         String orderId = orderVO.getOrderId();

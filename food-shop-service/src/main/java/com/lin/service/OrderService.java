@@ -1,8 +1,11 @@
 package com.lin.service;
 
+import com.lin.bo.ShopCartBO;
 import com.lin.bo.SubmitOrderBO;
 import com.lin.pojo.OrderStatus;
 import com.lin.vo.OrderVO;
+
+import java.util.List;
 
 /**
  * 订单服务
@@ -13,10 +16,11 @@ public interface OrderService {
 
     /**
      * 用于创建订单相关信息
+     * @param shopCartList 购物车列表
      * @param submitOrderBO 订单信息
      * @return 订单VO
      */
-    OrderVO createOrder(SubmitOrderBO submitOrderBO);
+    OrderVO createOrder(List<ShopCartBO> shopCartList, SubmitOrderBO submitOrderBO);
 
     /**
      * 修改订单状态

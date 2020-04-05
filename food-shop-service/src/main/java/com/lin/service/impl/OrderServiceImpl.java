@@ -3,6 +3,7 @@ package com.lin.service.impl;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import com.lin.bo.ShopCartBO;
 import com.lin.bo.SubmitOrderBO;
 import com.lin.dao.OrderItemsMapper;
 import com.lin.dao.OrderStatusMapper;
@@ -53,7 +54,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @Override
-    public OrderVO createOrder(SubmitOrderBO submitOrderBO) {
+    public OrderVO createOrder(List<ShopCartBO> shopCartList, SubmitOrderBO submitOrderBO) {
         // 包邮费用设置为0
         int postAmount = 0;
 
@@ -75,8 +76,10 @@ public class OrderServiceImpl implements OrderService {
         int realPayAmount = 0;
 
         for (String itemSpecId : itemSpecIdArr) {
-            // todo：整合 redis 后，商品购买数量重新从 redis 的购物车中获取
-            int buyCounts = 1;
+            // 整合 redis 后，商品购买数量重新从 redis 的购物车中获取
+            ShopCartBO shopCartItem = getBuyCountsFormShopCart(shopCartList, itemSpecId);
+
+            int buyCounts = shopCartItem.getBuyCounts();
 
             // 2.1 根据规格 id ，查询规格的具体信息，主要获取价格
             ItemsSpec itemsSpec = itemService.queryItemSpecById(itemSpecId);
@@ -114,6 +117,22 @@ public class OrderServiceImpl implements OrderService {
         orderVO.setMerchantOrdersVO(merchantOrdersVO);
 
         return orderVO;
+    }
+
+    /**
+     * 从 redis 中的购物车获取商品，为了获取其中的购买数量
+     * @param shopCartList 购物车列表
+     * @param specId 规格 id
+     * @return 指定规格 id 的购物车信息
+     */
+    private ShopCartBO getBuyCountsFormShopCart(List<ShopCartBO> shopCartList, String specId) {
+        for (ShopCartBO shopCart : shopCartList) {
+            if (shopCart.getSpecId().equals(specId)) {
+                return shopCart;
+            }
+        }
+
+        throw new RuntimeException(StrUtil.format("购物中未找到规格id为：【{}】的商品", specId));
     }
 
     /**
