@@ -213,19 +213,6 @@ public class PassportController extends BaseController {
 
     }
 
-    /**
-     * 设置用户信息的敏感字段为空
-     * @param user 用户信息
-     */
-    private void setNullProperty(Users user) {
-        user.setPassword(null);
-        user.setMobile(null);
-        user.setEmail(null);
-        user.setCreateTime(null);
-        user.setUpdateTime(null);
-        user.setBirthday(null);
-    }
-
     @ApiOperation(value = "用户退出登陆", notes = "用户退出登陆")
     @PostMapping("/logout")
     public JsonResult logout(@RequestParam String userId,

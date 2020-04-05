@@ -1,6 +1,7 @@
 package com.lin.controller;
 
 import com.lin.pojo.Orders;
+import com.lin.pojo.Users;
 import com.lin.service.center.MyOrdersService;
 import com.lin.utils.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,19 @@ public class BaseController {
         }
 
         return JsonResult.ok(order);
+    }
+
+    /**
+     * 设置用户信息的敏感字段为空
+     * @param user 用户信息
+     */
+    protected void setNullProperty(Users user) {
+        user.setPassword(null);
+        user.setMobile(null);
+        user.setEmail(null);
+        user.setCreateTime(null);
+        user.setUpdateTime(null);
+        user.setBirthday(null);
     }
 
 }

@@ -181,17 +181,4 @@ public class CenterUserController extends BaseController {
         return resultMap;
     }
 
-    /**
-     * 设置用户信息的敏感字段为空
-     * @param user 用户信息
-     */
-    private void setNullProperty(Users user) {
-        user.setPassword(null);
-        user.setMobile(null);
-        user.setEmail(null);
-        user.setCreateTime(null);
-        user.setUpdateTime(null);
-        user.setBirthday(null);
-    }
-
 }
