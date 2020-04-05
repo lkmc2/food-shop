@@ -3,6 +3,7 @@ package com.lin.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class JsonUtils {
      * @param beanType
      * @return
      */
-    public static <T>List<T> jsonToList(String jsonData, Class<T> beanType) {
+    public static <T> List<T> jsonToList(String jsonData, Class<T> beanType) {
     	JavaType javaType = MAPPER.getTypeFactory().constructParametricType(List.class, beanType);
     	try {
             return MAPPER.readValue(jsonData, javaType);
@@ -59,7 +60,7 @@ public class JsonUtils {
 			e.printStackTrace();
 		}
     	
-    	return null;
+    	return Lists.newArrayList();
     }
     
 }

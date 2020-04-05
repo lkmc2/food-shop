@@ -43,8 +43,6 @@ public class ShopCartController extends BaseController {
             return JsonResult.errorMsg("");
         }
 
-        System.out.println(shopCartBO);
-
         // 前端用户在登陆的情况下，添加商品到购物车，会同时在后端同步购物车到redis数据库
         // 需要判断当前购物车中包含已经存在的商品，如果存在则累加购买数量
         String shopCartJson = redisOperator.get(FOOD_SHOP_SHOP_CART + ":" + userId);
@@ -99,7 +97,26 @@ public class ShopCartController extends BaseController {
             return JsonResult.errorMsg("参数不能为空");
         }
 
-        // todo：用户在页面删除购物车中的商品数据，如果此时用户已经登陆，则需要同步删除后端购物车中的数据
+        // 用户在页面删除购物车中的商品数据，如果此时用户已经登陆，则需要同步删除 redis 购物车中的数据
+        String shopCartJson = redisOperator.get(FOOD_SHOP_SHOP_CART + ":" + userId);
+
+        if (StrUtil.isNotBlank(shopCartJson)) {
+            // redis 中已经有购物车
+            List<ShopCartBO> shopCartList = JsonUtils.jsonToList(shopCartJson, ShopCartBO.class);
+
+            // 判断购物车中是否存在已有商品，有的话则删除
+            for (ShopCartBO shopCart : shopCartList) {
+                String tempSpecId = shopCart.getSpecId();
+
+                if (tempSpecId.equals(itemSpecId)) {
+                    shopCartList.remove(shopCart);
+                    break;
+                }
+            }
+
+            // 覆盖现有 redis 中的购物车
+            redisOperator.set(FOOD_SHOP_SHOP_CART + ":" + userId, JsonUtils.objectToJson(shopCartList));
+        }
 
         return JsonResult.ok();
     }
