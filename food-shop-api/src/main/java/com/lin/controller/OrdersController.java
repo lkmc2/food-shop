@@ -63,7 +63,7 @@ public class OrdersController extends BaseController {
         // redis 缓存的购物车列表
         String shopCartJson = redisOperator.get(FOOD_SHOP_SHOP_CART + ":" + submitOrderBO.getUserId());
 
-        if (StrUtil.isNotBlank(shopCartJson)) {
+        if (StrUtil.isBlank(shopCartJson)) {
             return JsonResult.errorMsg("购物车数据不正确");
         }
 
