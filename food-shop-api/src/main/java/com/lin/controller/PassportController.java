@@ -4,10 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.lin.bo.UserBO;
 import com.lin.pojo.Users;
 import com.lin.service.UserService;
-import com.lin.utils.CookieUtils;
-import com.lin.utils.JsonResult;
-import com.lin.utils.JsonUtils;
-import com.lin.utils.Md5Utils;
+import com.lin.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +21,13 @@ import javax.servlet.http.HttpServletResponse;
 @Api(value = "注册登录", tags = {"用于注册登陆的相关接口"})
 @RestController
 @RequestMapping("passport")
-public class PassportController {
+public class PassportController extends BaseController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RedisOperator redisOperator;
 
     @ApiOperation(value = "用户名是否存在", notes = "用户名是否存在")
     @GetMapping("/usernameIsExist")
@@ -122,9 +122,50 @@ public class PassportController {
         CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(userResult), true);
 
         // todo：生成用户token，存入redis会话
-        // todo：同步购物车数据
+        // 同步购物车数据
+        syncShopCartData(userResult.getId(), request, response);
 
         return JsonResult.ok(userResult);
+    }
+
+    /**
+     * 注册登陆成功后，同步 cookie 和 redis 中的购物车数据
+     * @param userId 用户 id
+     * @param request 请求
+     * @param response 响应
+     */
+    private void syncShopCartData(String userId,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response) {
+        /*
+        1.redis 中无数据，①如果 cookie 中的购物车为空，name这个时候不做任何处理；
+                          ②如果 cookie 中的购物车不为空，此时直接放入 redis 中；
+        2.redis 中有数据，①如果 cookie 中的购物车为空，那么直接把 redis 的购物车覆盖本地  cookie；
+                          ②如果 cookie 中的购物车不为空，如果 cookie 中的某个商品在 redis 中存在，
+                          则以 cookie 为主，删除 redis 中的商品，把 cookie 中的商品直接覆盖 redis 中的商品
+        3.同步到了 redis 中后，覆盖本地 cookie 购物车的数据，保证本地购物车的数据是同步的
+         */
+
+        // 从 redis 中获取购物车
+        String shopCartJsonRedis = redisOperator.get(FOOD_SHOP_SHOP_CART + ":" + userId);
+
+        // 从 cookie 中获取购物车
+        String shopCartStrCookie = CookieUtils.getCookieValue(request, FOOD_SHOP_SHOP_CART, true);
+
+        if (StrUtil.isBlank(shopCartJsonRedis)) {
+            if (StrUtil.isNotBlank(shopCartStrCookie)) {
+                // redis 为空，cookie 不为空，直接把 cookie 中的数据放入 redis
+                redisOperator.set(FOOD_SHOP_SHOP_CART + ":" + userId, shopCartStrCookie);
+            }
+        } else {
+            if (StrUtil.isNotBlank(shopCartStrCookie)) {
+                // redis 不为空，cookie 不为空，合并 cookie 和 redis 终点购物车商品数据（同一商品则覆盖 redis）
+            } else {
+                // redis 不为空，cookie 为空，直接把 redis 覆盖 cookie
+                CookieUtils.setCookie(request, response, FOOD_SHOP_SHOP_CART, shopCartJsonRedis, true);
+            }
+        }
+
     }
 
     /**
