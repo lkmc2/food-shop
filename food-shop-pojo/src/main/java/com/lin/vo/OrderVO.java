@@ -1,8 +1,11 @@
 package com.lin.vo;
 
+import com.lin.bo.ShopCartBO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * 订单 VO
@@ -18,5 +21,8 @@ public class OrderVO {
 
     @ApiModelProperty(value = "商户订单 VO")
     private MerchantOrdersVO merchantOrdersVO;
+
+    @ApiModelProperty(value = "需要移除的购物车列表")
+    private List<ShopCartBO> toBeRemovedShopCartList;
 
 }

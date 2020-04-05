@@ -3,6 +3,7 @@ package com.lin.service.impl;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import com.google.common.collect.Lists;
 import com.lin.bo.ShopCartBO;
 import com.lin.bo.SubmitOrderBO;
 import com.lin.dao.OrderItemsMapper;
@@ -75,11 +76,17 @@ public class OrderServiceImpl implements OrderService {
         // 优惠后的实际支付价格累计
         int realPayAmount = 0;
 
+        // 需要移除的购物车列表
+        List<ShopCartBO> toBeRemovedShopCartList = Lists.newArrayList();
+
         for (String itemSpecId : itemSpecIdArr) {
             // 整合 redis 后，商品购买数量重新从 redis 的购物车中获取
             ShopCartBO shopCartItem = getBuyCountsFormShopCart(shopCartList, itemSpecId);
 
             int buyCounts = shopCartItem.getBuyCounts();
+
+            // 该购物车项需要从购物车中移除
+            toBeRemovedShopCartList.add(shopCartItem);
 
             // 2.1 根据规格 id ，查询规格的具体信息，主要获取价格
             ItemsSpec itemsSpec = itemService.queryItemSpecById(itemSpecId);
@@ -115,6 +122,7 @@ public class OrderServiceImpl implements OrderService {
         OrderVO orderVO = new OrderVO();
         orderVO.setOrderId(orderId);
         orderVO.setMerchantOrdersVO(merchantOrdersVO);
+        orderVO.setToBeRemovedShopCartList(toBeRemovedShopCartList);
 
         return orderVO;
     }

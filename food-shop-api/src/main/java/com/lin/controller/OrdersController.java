@@ -78,8 +78,12 @@ public class OrdersController extends BaseController {
 
 
         // 2.创建订单以后，移除购物车中已结算（已提交）的商品
-        // todo：整合 redis 之后，完善购物车中的已结算商品清除，并且同步到前端的 cookie
-        CookieUtils.setCookie(request, response, FOOD_SHOP_SHOP_CART, "", true);
+        // 清理覆盖现有的 redis 汇总的购物数据
+        shopCartList.removeAll(orderVO.getToBeRemovedShopCartList());
+        redisOperator.set(FOOD_SHOP_SHOP_CART + ":" + submitOrderBO.getUserId(), JsonUtils.objectToJson(shopCartList));
+
+        // 整合 redis 之后，完善购物车中的已结算商品清除，并且同步到前端的 cookie
+        CookieUtils.setCookie(request, response, FOOD_SHOP_SHOP_CART, JsonUtils.objectToJson(shopCartList), true);
 
         // 3.向支付中心发送当前订单，用于保存支付中心的订单数据
         // 商户订单 VO
