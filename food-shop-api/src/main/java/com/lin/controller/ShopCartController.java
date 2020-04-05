@@ -13,8 +13,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -35,9 +33,7 @@ public class ShopCartController extends BaseController {
     @PostMapping("/add")
     public JsonResult add(
             @RequestParam String userId,
-            @RequestBody ShopCartBO shopCartBO,
-            HttpServletRequest request,
-            HttpServletResponse response) {
+            @RequestBody ShopCartBO shopCartBO) {
 
         if (StrUtil.isBlank(userId)) {
             return JsonResult.errorMsg("");
@@ -89,9 +85,7 @@ public class ShopCartController extends BaseController {
     @PostMapping("/del")
     public JsonResult del(
             @RequestParam String userId,
-            @RequestParam String itemSpecId,
-            HttpServletRequest request,
-            HttpServletResponse response) {
+            @RequestParam String itemSpecId) {
 
         if (StrUtil.isBlank(userId) || StrUtil.isBlank(itemSpecId)) {
             return JsonResult.errorMsg("参数不能为空");
