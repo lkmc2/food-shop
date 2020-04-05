@@ -101,7 +101,20 @@ public class IndexController {
             return JsonResult.errorMsg("分类不存在");
         }
 
-        List<CategoryVO> list = categoryService.getSubCatList(rootCatId);
+        // 查询缓存
+        String catsStr = redisOperator.get("subCat:" + rootCatId);
+
+        List<CategoryVO> list;
+
+        if (StrUtil.isBlank(catsStr)) {
+            // 从数据库中查询，并设置到缓存中
+            list = categoryService.getSubCatList(rootCatId);
+            redisOperator.set("subCat:" + rootCatId, JsonUtils.objectToJson(list));
+        } else {
+            // 直接加载缓存
+            list = JsonUtils.jsonToList(catsStr, CategoryVO.class);
+        }
+
         return JsonResult.ok(list);
     }
 
@@ -115,14 +128,14 @@ public class IndexController {
         }
 
         // 查询缓存
-        String sixNewItemsStr = redisOperator.get(StrUtil.format("sixNewItems/{}", rootCatId));
+        String sixNewItemsStr = redisOperator.get("sixNewItems:" + rootCatId);
 
         List<NewItemsVO> list;
 
         if (StrUtil.isBlank(sixNewItemsStr)) {
             // 从数据库中查询，并设置到缓存中
             list = categoryService.getSixNewItemLazy(rootCatId);
-            redisOperator.set(StrUtil.format("sixNewItems/{}", rootCatId), JsonUtils.objectToJson(list));
+            redisOperator.set("sixNewItems:" + rootCatId, JsonUtils.objectToJson(list));
         } else {
             // 直接加载缓存
             list = JsonUtils.jsonToList(sixNewItemsStr, NewItemsVO.class);
