@@ -234,6 +234,10 @@ public class PassportController extends BaseController {
         // 清除用户相关的 cookie 信息
         CookieUtils.deleteCookie(request, response, "user");
 
+        // 用户退出登陆，需要清空购物车
+        // 分布式会话中需要清除用户数据
+        CookieUtils.deleteCookie(request, response, FOOD_SHOP_SHOP_CART);
+
         return JsonResult.ok();
     }
 
