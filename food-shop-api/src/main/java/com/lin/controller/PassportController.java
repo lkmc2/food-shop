@@ -1,6 +1,8 @@
 package com.lin.controller;
 
 import cn.hutool.core.util.StrUtil;
+import com.google.common.collect.Lists;
+import com.lin.bo.ShopCartBO;
 import com.lin.bo.UserBO;
 import com.lin.pojo.Users;
 import com.lin.service.UserService;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 认证服务 Controller
@@ -160,6 +163,48 @@ public class PassportController extends BaseController {
         } else {
             if (StrUtil.isNotBlank(shopCartStrCookie)) {
                 // redis 不为空，cookie 不为空，合并 cookie 和 redis 终点购物车商品数据（同一商品则覆盖 redis）
+                /*
+                 1.已经存在的，把 cookie 中对应的数量，覆盖 redis
+                 2.该项商品标记为待删除，同一放入一个待删除的 List
+                 3.从 cookie 中清除所有的待删除 List
+                 4.合并  redis 和 cookie 中的数据
+                 5.合并到 redis 和 cookie 中
+                 */
+
+                // redis 购物车列表
+                List<ShopCartBO> shopCartRedisList = JsonUtils.jsonToList(shopCartJsonRedis, ShopCartBO.class);
+
+                // cookie 购物车列表
+                List<ShopCartBO> shopCartCookieList = JsonUtils.jsonToList(shopCartJsonRedis, ShopCartBO.class);
+
+                // 待删除购物车列表
+                List<ShopCartBO> pendingDeleteList = Lists.newArrayList();
+
+                for (ShopCartBO redisShopCart : shopCartRedisList) {
+                    String redisSpecId = redisShopCart.getSpecId();
+
+                    for (ShopCartBO cookieShopCart : shopCartCookieList) {
+                        String cookieSpecId = cookieShopCart.getSpecId();
+
+                        if (redisSpecId.equals(cookieSpecId)) {
+                            // 同一商品，使用 cookie 中的购买数量覆盖 redis 中的购买数量，不累加
+                            redisShopCart.setBuyCounts(cookieShopCart.getBuyCounts());
+
+                            // 把该项 cookie 中的购物车放入待删除列表，用于最后的删除与合并
+                            pendingDeleteList.add(cookieShopCart);
+                        }
+                    }
+                }
+
+                // 从现有 cookie 中删除对应的覆盖过的商品数据
+                shopCartCookieList.removeAll(pendingDeleteList);
+
+                // 合并两个 List
+                shopCartRedisList.addAll(shopCartCookieList);
+
+                // 更新到 redis 和 cookie
+                redisOperator.set(FOOD_SHOP_SHOP_CART + ":" + userId, JsonUtils.objectToJson(shopCartRedisList));
+                CookieUtils.setCookie(request, response, FOOD_SHOP_SHOP_CART, JsonUtils.objectToJson(shopCartRedisList), true);
             } else {
                 // redis 不为空，cookie 为空，直接把 redis 覆盖 cookie
                 CookieUtils.setCookie(request, response, FOOD_SHOP_SHOP_CART, shopCartJsonRedis, true);
