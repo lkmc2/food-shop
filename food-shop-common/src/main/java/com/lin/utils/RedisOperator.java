@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -81,6 +82,13 @@ public class RedisOperator {
 	 */
 	public String get(String key) {
 		return (String)redisTemplate.opsForValue().get(key);
+	}
+
+	/**
+	 * 实现命令：MGET key1,key2,key3，返回多个 key 所关联的字符串值列表。
+	 */
+	public List<String> mget(List<String> keys) {
+		return redisTemplate.opsForValue().multiGet(keys);
 	}
 
 	// Hash（哈希表）
