@@ -2,6 +2,7 @@ package com.lin;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
@@ -12,7 +13,7 @@ import tk.mybatis.spring.annotation.MapperScan;
  * @author lkmc2
  * @date 2020/3/7 14:02
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 @MapperScan(basePackages = "com.lin.dao")
 @ComponentScan(basePackages = {"com.lin", "org.n3r.idworker"})
 @EnableScheduling // 开启定时任务
