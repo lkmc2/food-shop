@@ -1,6 +1,5 @@
 package com.lin.controller;
 
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.google.common.collect.Lists;
 import com.lin.bo.ShopCartBO;
@@ -11,7 +10,6 @@ import com.lin.utils.*;
 import com.lin.vo.UsersVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -97,28 +95,10 @@ public class PassportController extends BaseController {
         // 设置 cookie
         CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(usersVO), true);
 
-        // todo：生成用户token，存入redis会话
         // 同步购物车数据
         syncShopCartData(userResult.getId(), request, response);
 
         return JsonResult.ok();
-    }
-
-    /**
-     * 转换用户对象为用户 VO 对象
-     * @param users 用户对象
-     * @return 用户 VO 对象
-     */
-    private UsersVO convertUsersVO(Users users) {
-        // 实现用户的 redis 会话，保存会话到 redis
-        String uniqueToken = IdUtil.simpleUUID();
-        redisOperator.set(REDIS_USER_TOKEN + ":" + users.getId(), uniqueToken);
-
-        UsersVO usersVO = new UsersVO();
-        BeanUtils.copyProperties(users, usersVO);
-        usersVO.setUserUniqueToken(uniqueToken);
-
-        return usersVO;
     }
 
     @ApiOperation(value = "用户登陆", notes = "用户登陆")

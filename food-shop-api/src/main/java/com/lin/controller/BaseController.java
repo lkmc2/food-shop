@@ -1,9 +1,13 @@
 package com.lin.controller;
 
+import cn.hutool.core.util.IdUtil;
 import com.lin.pojo.Orders;
 import com.lin.pojo.Users;
 import com.lin.service.center.MyOrdersService;
 import com.lin.utils.JsonResult;
+import com.lin.utils.RedisOperator;
+import com.lin.vo.UsersVO;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -37,6 +41,9 @@ public class BaseController {
     @Autowired
     protected MyOrdersService myOrdersService;
 
+    @Autowired
+    private RedisOperator redisOperator;
+
     /**
      * 用户验证用户和订单是否有关联关系，避免非法用户调用
      * @param userId 用户 id
@@ -64,6 +71,23 @@ public class BaseController {
         user.setCreateTime(null);
         user.setUpdateTime(null);
         user.setBirthday(null);
+    }
+
+    /**
+     * 转换用户对象为用户 VO 对象，并保存用户会话到 redis 中
+     * @param users 用户对象
+     * @return 用户 VO 对象
+     */
+    protected UsersVO convertUsersVO(Users users) {
+        // 实现用户的 redis 会话，保存会话到 redis
+        String uniqueToken = IdUtil.simpleUUID();
+        redisOperator.set(REDIS_USER_TOKEN + ":" + users.getId(), uniqueToken);
+
+        UsersVO usersVO = new UsersVO();
+        BeanUtils.copyProperties(users, usersVO);
+        usersVO.setUserUniqueToken(uniqueToken);
+
+        return usersVO;
     }
 
 }

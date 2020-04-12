@@ -14,6 +14,7 @@ import com.lin.service.center.CenterUserService;
 import com.lin.utils.CookieUtils;
 import com.lin.utils.JsonResult;
 import com.lin.utils.JsonUtils;
+import com.lin.vo.UsersVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -118,14 +119,15 @@ public class CenterUserController extends BaseController {
         Users userResult = centerUserService.updateUserFace(userId, finalUserFaceUrl);
 
         // 设置用户信息的敏感字段为空
-        setNullProperty(userResult);
+//        setNullProperty(userResult);
+
+        // 实现用户的 redis 会话，保存会话到 redis
+        UsersVO usersVO = convertUsersVO(userResult);
 
         // 设置 cookie
-        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(userResult), true);
+        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(usersVO), true);
 
-        // todo：后续将增加令牌 token ，会整合进 redis ，分布式会话
-
-        return JsonResult.ok(userResult);
+        return JsonResult.ok(usersVO);
     }
 
     @ApiOperation(value = "修改用户信息", notes = "修改用户信息")
@@ -149,14 +151,15 @@ public class CenterUserController extends BaseController {
         Users userResult = centerUserService.updateUserInfo(userId, centerUserBO);
 
         // 设置用户信息的敏感字段为空
-        setNullProperty(userResult);
+//        setNullProperty(userResult);
+
+        // 实现用户的 redis 会话，保存会话到 redis
+        UsersVO usersVO = convertUsersVO(userResult);
 
         // 设置 cookie
-        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(userResult), true);
+        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(usersVO), true);
 
-        // todo：后续将增加令牌 token ，会整合进 redis ，分布式会话
-
-        return JsonResult.ok(userResult);
+        return JsonResult.ok(usersVO);
     }
 
     /**
