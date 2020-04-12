@@ -50,4 +50,14 @@ public class RedisController {
         return redisOperator.mget(Arrays.asList(keys));
     }
 
+    /**
+     * 批量查询，使用管道 pipline
+     * @param keys 多个关键字
+     * @return 关键字对应的值列表
+     */
+    @GetMapping("/batchGet")
+    public List<Object> batchGet(String... keys) {
+        return redisOperator.batchGet(Arrays.asList(keys));
+    }
+
 }
