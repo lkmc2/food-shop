@@ -9,9 +9,16 @@ spring:
     username: root
     password: 123456
   redis:
+    # redis 单机单实例
+#    database: 1
+#    host: 127.0.0.1
+#    port: 6379
+#    password:
+    # redis 哨兵模式
     database: 1
-    host: 127.0.0.1
-    port: 6379
-    password:
+    password: test
+    sentinel:
+      master: redis-master # 哨兵主节点名称
+      nodes: 192.168.1.191:26379,192.168.1.192:26379,192.168.1.193:26379 # 哨兵节点ip地址
 
 
