@@ -92,12 +92,7 @@ public class PassportController extends BaseController {
 //        setNullProperty(userResult);
 
         // 实现用户的 redis 会话，保存会话到 redis
-        String uniqueToken = IdUtil.simpleUUID();
-        redisOperator.set(REDIS_USER_TOKEN + ":" + userResult.getId(), uniqueToken);
-
-        UsersVO usersVO = new UsersVO();
-        BeanUtils.copyProperties(userResult, usersVO);
-        usersVO.setUserUniqueToken(uniqueToken);
+        UsersVO usersVO = convertUsersVO(userResult);
 
         // 设置 cookie
         CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(usersVO), true);
@@ -107,6 +102,23 @@ public class PassportController extends BaseController {
         syncShopCartData(userResult.getId(), request, response);
 
         return JsonResult.ok();
+    }
+
+    /**
+     * 转换用户对象为用户 VO 对象
+     * @param users 用户对象
+     * @return 用户 VO 对象
+     */
+    private UsersVO convertUsersVO(Users users) {
+        // 实现用户的 redis 会话，保存会话到 redis
+        String uniqueToken = IdUtil.simpleUUID();
+        redisOperator.set(REDIS_USER_TOKEN + ":" + users.getId(), uniqueToken);
+
+        UsersVO usersVO = new UsersVO();
+        BeanUtils.copyProperties(users, usersVO);
+        usersVO.setUserUniqueToken(uniqueToken);
+
+        return usersVO;
     }
 
     @ApiOperation(value = "用户登陆", notes = "用户登陆")
@@ -131,12 +143,14 @@ public class PassportController extends BaseController {
         }
 
         // 设置用户信息的敏感字段为空
-        setNullProperty(userResult);
+//        setNullProperty(userResult);
+
+        // 实现用户的 redis 会话，保存会话到 redis
+        UsersVO usersVO = convertUsersVO(userResult);
 
         // 设置 cookie
-        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(userResult), true);
+        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(usersVO), true);
 
-        // todo：生成用户token，存入redis会话
         // 同步购物车数据
         syncShopCartData(userResult.getId(), request, response);
 
@@ -232,6 +246,9 @@ public class PassportController extends BaseController {
                              HttpServletResponse response){
         // 清除用户相关的 cookie 信息
         CookieUtils.deleteCookie(request, response, "user");
+
+        // 用户退出登陆，清除 redis 中的用户会话信息
+        redisOperator.del(REDIS_USER_TOKEN + ":" + userId);
 
         // 用户退出登陆，需要清空购物车
         // 分布式会话中需要清除用户数据
