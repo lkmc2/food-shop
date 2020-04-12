@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import tk.mybatis.spring.annotation.MapperScan;
 
 /**
@@ -14,7 +15,8 @@ import tk.mybatis.spring.annotation.MapperScan;
 @SpringBootApplication
 @MapperScan(basePackages = "com.lin.dao")
 @ComponentScan(basePackages = {"com.lin", "org.n3r.idworker"})
-@EnableScheduling
+@EnableScheduling // 开启定时任务
+@EnableRedisHttpSession // 开启使用 redis 作为 spring session
 public class Application {
 
     public static void main(String[] args) {
