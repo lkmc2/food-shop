@@ -1,5 +1,6 @@
 package com.lin.controller;
 
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.google.common.collect.Lists;
 import com.lin.bo.ShopCartBO;
@@ -7,8 +8,10 @@ import com.lin.bo.UserBO;
 import com.lin.pojo.Users;
 import com.lin.service.UserService;
 import com.lin.utils.*;
+import com.lin.vo.UsersVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -86,13 +89,22 @@ public class PassportController extends BaseController {
         Users userResult = userService.createUser(userBO);
 
         // 设置用户信息的敏感字段为空
-        setNullProperty(userResult);
+//        setNullProperty(userResult);
+
+        // 实现用户的 redis 会话，保存会话到 redis
+        String uniqueToken = IdUtil.simpleUUID();
+        redisOperator.set(REDIS_USER_TOKEN + ":" + userResult.getId(), uniqueToken);
+
+        UsersVO usersVO = new UsersVO();
+        BeanUtils.copyProperties(userResult, usersVO);
+        usersVO.setUserUniqueToken(uniqueToken);
 
         // 设置 cookie
-        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(userResult), true);
+        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(usersVO), true);
 
         // todo：生成用户token，存入redis会话
-        // todo：同步购物车数据
+        // 同步购物车数据
+        syncShopCartData(userResult.getId(), request, response);
 
         return JsonResult.ok();
     }
